@@ -15,5 +15,5 @@ type Customer struct {
 	EndDate    *time.Time
 	IsActive   bool      `gorm:"default:false"`
 	CreateAt   time.Time `gorm:"default:now()"`
-	WorkOrders WorkOrder `gorm:"foreignKey:CustomerID"`
+	WorkOrders []WorkOrder `gorm:"foreignKey:CustomerID"`
 }
