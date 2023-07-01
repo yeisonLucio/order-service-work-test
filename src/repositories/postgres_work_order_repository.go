@@ -5,11 +5,11 @@ import (
 	"lucio.com/order-service/src/models"
 )
 
-type PostgresCreateWorkOrderRepository struct {
+type PostgresWorkOrderRepository struct {
 	ClientDB *gorm.DB
 }
 
-func (p *PostgresCreateWorkOrderRepository) Create(workOrder models.WorkOrder) error {
+func (p *PostgresWorkOrderRepository) Create(workOrder models.WorkOrder) error {
 	result := p.ClientDB.Create(&workOrder)
 
 	return result.Error

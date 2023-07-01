@@ -49,7 +49,9 @@ func (c *CustomerController) CreateWorkOrder(ctx *gin.Context) {
 		return
 	}
 
-	customer, err := c.CreateWorkOrderUC.Execute(createWorkOrderDTO)
+	createWorkOrderDTO.CustomerID = ctx.Param("id")
+
+	workOrder, err := c.CreateWorkOrderUC.Execute(createWorkOrderDTO)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -59,7 +61,7 @@ func (c *CustomerController) CreateWorkOrder(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
-		"data": customer,
+		"data": workOrder,
 	})
 }
 

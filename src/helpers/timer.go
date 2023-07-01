@@ -1,6 +1,8 @@
 package helpers
 
-import "time"
+import (
+	"time"
+)
 
 type Timer interface {
 	FromString(date string) (time.Time, error)

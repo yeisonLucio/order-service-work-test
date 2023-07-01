@@ -7,10 +7,7 @@ import (
 	"lucio.com/order-service/src/helpers"
 	"lucio.com/order-service/src/models"
 	"lucio.com/order-service/src/repositories/contracts"
-	"lucio.com/order-service/src/vo"
 )
-
-const limitDifference float64 = 2
 
 type CreateWorkOrderUC struct {
 	WorkOrderRepository contracts.WorkOrderRepository
@@ -22,9 +19,9 @@ type CreateWorkOrderUC struct {
 func (c *CreateWorkOrderUC) Execute(
 	createWorkOrderDTO dto.CreateWorkOrderDTO,
 ) (*dto.CreatedWorkOrderDTO, error) {
-	customer := c.CustomerRepository.FindByID(createWorkOrderDTO.CustomerID)
-	if customer == nil {
-		return nil, errors.New("el cliente ingresado no existe")
+	customer, err := c.CustomerRepository.FindByID(createWorkOrderDTO.CustomerID)
+	if err != nil {
+		return nil, err
 	}
 
 	beginPlannedDate, err := c.Time.FromString(createWorkOrderDTO.PlannedDateBegin)
@@ -37,41 +34,43 @@ func (c *CreateWorkOrderUC) Execute(
 		return nil, errors.New("el formato de la fecha de fin es incorrecto")
 	}
 
-	difference := endPlannedDate.Sub(beginPlannedDate)
-
-	if difference.Hours() > limitDifference {
-		return nil, errors.New("la diferencia de las fechas no puede ser mayor a dos horas")
-	}
-
-	var workOrderType vo.WorkOrderType
-
-	if workOrderType.SetValue(createWorkOrderDTO.WorkOrderType) != nil {
-		return nil, errors.New("el tipo de orden ingresada no esta permitida")
-	}
-
-	if workOrderType.GetValue() == vo.InactiveCustomerType && !customer.IsActive {
-		return nil, errors.New("el cliente ya se encuentra inactivo")
-	}
-
 	workOrder := models.WorkOrder{
 		ID:               c.UUID.Generate(),
 		CustomerID:       customer.ID,
 		Title:            createWorkOrderDTO.Title,
-		PlannedDateBegin: beginPlannedDate,
-		PlannedDateEnd:   endPlannedDate,
-		Status:           vo.StatusNew,
-		Type:             workOrderType,
+		PlannedDateBegin: &beginPlannedDate,
+		PlannedDateEnd:   &endPlannedDate,
+		Status:           models.StatusNew,
+		Type:             createWorkOrderDTO.WorkOrderType,
 	}
 
-	if workOrderType.GetValue() == vo.InactiveCustomerType {
+	if err := workOrder.Validate(); err != nil {
+		return nil, err
+	}
+
+	if workOrder.Type == models.InactiveCustomerType {
+		if !customer.IsActive {
+			return nil, errors.New("el cliente ya se encuentra inactivo")
+		}
+
 		customer.IsActive = false
 		customer.EndDate = c.Time.Now()
+
 		if c.CustomerRepository.Save(customer) != nil {
 			return nil, errors.New("el cliente no pudo ser actualizado")
 		}
 	}
 
-	c.WorkOrderRepository.Create(workOrder)
+	if err := c.WorkOrderRepository.Create(workOrder); err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	return &dto.CreatedWorkOrderDTO{
+		ID:               workOrder.ID.String(),
+		Title:            workOrder.Title,
+		PlannedDateBegin: workOrder.PlannedDateBegin.String(),
+		PlannedDateEnd:   workOrder.PlannedDateEnd.String(),
+		WorkOrderType:    workOrder.Type,
+		Status:           workOrder.Status,
+	}, nil
 }

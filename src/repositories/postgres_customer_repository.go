@@ -1,7 +1,8 @@
 package repositories
 
 import (
-	"github.com/google/uuid"
+	"errors"
+
 	"gorm.io/gorm"
 	"lucio.com/order-service/src/models"
 )
@@ -16,16 +17,14 @@ func (p *PostgresCustomerRepository) Create(customer models.Customer) error {
 	return result.Error
 }
 
-func (p *PostgresCustomerRepository) FindByID(ID string) *models.Customer {
-	customer := models.Customer{
-		ID: uuid.MustParse(ID),
+func (p *PostgresCustomerRepository) FindByID(ID string) (*models.Customer, error) {
+	var customer models.Customer
+
+	if result := p.ClientDB.First(&customer, "id=?", ID); result.RowsAffected == 0 {
+		return nil, errors.New("cliente no encontrado")
 	}
 
-	if result := p.ClientDB.First(&customer); result.RowsAffected == 0 {
-		return nil
-	}
-
-	return &customer
+	return &customer, nil
 }
 
 func (p *PostgresCustomerRepository) Save(customer *models.Customer) error {

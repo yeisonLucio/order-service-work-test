@@ -9,7 +9,7 @@ import (
 
 type CreateCustomerUC struct {
 	CustomerRepository contracts.CustomerRepository
-	UUID               helpers.DefaultUUIDGenerator
+	UUID               helpers.UUIDGenerator
 }
 
 func (c *CreateCustomerUC) Execute(
