@@ -1,8 +1,9 @@
 package repositories
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"lucio.com/order-service/src/dto"
+	"lucio.com/order-service/src/entites"
 	"lucio.com/order-service/src/models"
 )
 
@@ -10,17 +11,15 @@ type PostgresCustomerRepository struct {
 	ClientDB *gorm.DB
 }
 
-func (p PostgresCustomerRepository) Create(createCustomerDTO dto.CreateCustomerDTO) (*models.Customer, error) {
-
-	customer := models.Customer{
-		FirstName: createCustomerDTO.FirstName,
-		LastName:  createCustomerDTO.LastName,
-		Address:   createCustomerDTO.Address,
+func (p *PostgresCustomerRepository) Save(customer entites.Customer) error {
+	customerDB := models.Customer{
+		ID:        uuid.MustParse(customer.ID),
+		FirstName: customer.FirstName,
+		LastName:  customer.LastName,
+		Address:   customer.Address,
 	}
 
-	if result := p.ClientDB.Create(&customer); result.Error != nil {
-		return nil, result.Error
-	}
+	result := p.ClientDB.Create(&customerDB)
 
-	return &customer, nil
+	return result.Error
 }
