@@ -12,15 +12,15 @@ func getRoutes(app *gin.Engine) *gin.Engine {
 		customers := api.Group("customers")
 		{
 			customers.POST("/", di.Container.CustomerController.CreateCustomer)
-			customers.GET("/")
-			customers.POST("/:id/work-orders")
-			customers.GET("/:id/work-orders")
+			customers.GET("/", di.Container.CustomerController.GetCustomers)
+			customers.POST("/:id/work-orders", di.Container.CustomerController.CreateWorkOrder)
+			customers.GET("/:id/work-orders", di.Container.CustomerController.GetWorkOrders)
 		}
 
 		orders := api.Group("work-orders")
 		{
-			orders.GET("/")
-			orders.PATCH(":id/finish")
+			orders.GET("/", di.Container.WorkOrderController.GetWorkOrders)
+			orders.PATCH(":id/finish", di.Container.WorkOrderController.FinishWorkOrder)
 		}
 	}
 

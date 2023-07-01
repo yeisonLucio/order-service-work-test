@@ -3,11 +3,11 @@ package helpers
 import "github.com/google/uuid"
 
 type UUIDGenerator interface {
-	Generate() string
+	Generate() uuid.UUID
 }
 
 type DefaultUUIDGenerator struct{}
 
-func (g *DefaultUUIDGenerator) Generate() string {
-	return uuid.New().String()
+func (g *DefaultUUIDGenerator) Generate() uuid.UUID {
+	return uuid.New()
 }

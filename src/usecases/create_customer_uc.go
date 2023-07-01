@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"lucio.com/order-service/src/dto"
-	"lucio.com/order-service/src/entites"
 	"lucio.com/order-service/src/helpers"
+	"lucio.com/order-service/src/models"
 	"lucio.com/order-service/src/repositories/contracts"
 )
 
@@ -14,20 +14,20 @@ type CreateCustomerUC struct {
 
 func (c *CreateCustomerUC) Execute(
 	createCustomerDTO dto.CreateCustomerDTO,
-) (*dto.CustomerCreatedResponse, error) {
-	customer := entites.Customer{
+) (*dto.CreatedCustomerDTO, error) {
+	customer := models.Customer{
 		ID:        c.UUID.Generate(),
 		FirstName: createCustomerDTO.FirstName,
 		LastName:  createCustomerDTO.LastName,
 		Address:   createCustomerDTO.Address,
 	}
 
-	if err := c.CustomerRepository.Save(customer); err != nil {
+	if err := c.CustomerRepository.Create(customer); err != nil {
 		return nil, err
 	}
 
-	response := dto.CustomerCreatedResponse{
-		ID:        customer.ID,
+	response := dto.CreatedCustomerDTO{
+		ID:        customer.ID.String(),
 		FirstName: customer.FirstName,
 		LastName:  customer.LastName,
 		Address:   customer.Address,

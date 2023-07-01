@@ -1,9 +1,7 @@
 package contracts
 
-import (
-	"lucio.com/order-service/src/entites"
-)
+import "lucio.com/order-service/src/models"
 
 type WorkOrderRepository interface {
-	Save(workOrder entites.WorkOrder) error
+	Create(workOrder models.WorkOrder) error
 }

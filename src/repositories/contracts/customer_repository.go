@@ -1,9 +1,9 @@
 package contracts
 
-import (
-	"lucio.com/order-service/src/entites"
-)
+import "lucio.com/order-service/src/models"
 
 type CustomerRepository interface {
-	Save(customer entites.Customer) error
+	Create(customer models.Customer) error
+	FindByID(ID string) *models.Customer
+	Save(customer *models.Customer) error
 }

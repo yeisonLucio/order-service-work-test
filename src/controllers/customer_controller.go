@@ -9,7 +9,8 @@ import (
 )
 
 type CustomerController struct {
-	CreateCustomerUC contracts.CreateCustomer
+	CreateCustomerUC  contracts.CreateCustomerUC
+	CreateWorkOrderUC contracts.CreateWorkOrderUC
 }
 
 func (c CustomerController) CreateCustomer(ctx *gin.Context) {
@@ -18,7 +19,7 @@ func (c CustomerController) CreateCustomer(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&createCustomerDTO); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
-			"id":    "body_decode_error",
+			"id":    "bad_request",
 		})
 		return
 	}
@@ -27,7 +28,7 @@ func (c CustomerController) CreateCustomer(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
-			"id":    "create_customer_error",
+			"id":    "unexpected_error",
 		})
 		return
 	}
@@ -35,4 +36,37 @@ func (c CustomerController) CreateCustomer(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, gin.H{
 		"data": customer,
 	})
+}
+
+func (c *CustomerController) CreateWorkOrder(ctx *gin.Context) {
+	var createWorkOrderDTO dto.CreateWorkOrderDTO
+
+	if err := ctx.ShouldBindJSON(&createWorkOrderDTO); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+			"id":    "bad_request",
+		})
+		return
+	}
+
+	customer, err := c.CreateWorkOrderUC.Execute(createWorkOrderDTO)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+			"id":    "unexpected_error",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{
+		"data": customer,
+	})
+}
+
+func (w *CustomerController) GetWorkOrders(ctx *gin.Context) {
+
+}
+
+func (w *CustomerController) GetCustomers(ctx *gin.Context) {
+
 }

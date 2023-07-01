@@ -8,7 +8,8 @@ import (
 )
 
 type Dependencies struct {
-	CustomerController *controllers.CustomerController
+	CustomerController  *controllers.CustomerController
+	WorkOrderController *controllers.WorkOrderController
 }
 
 var Container Dependencies
