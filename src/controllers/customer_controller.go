@@ -5,12 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"lucio.com/order-service/src/dto"
+	rcontracts "lucio.com/order-service/src/repositories/contracts"
 	"lucio.com/order-service/src/usecases/contracts"
 )
 
 type CustomerController struct {
-	CreateCustomerUC  contracts.CreateCustomerUC
-	CreateWorkOrderUC contracts.CreateWorkOrderUC
+	CreateCustomerUC   contracts.CreateCustomerUC
+	CreateWorkOrderUC  contracts.CreateWorkOrderUC
+	CustomerRepository rcontracts.CustomerRepository
 }
 
 func (c CustomerController) CreateCustomer(ctx *gin.Context) {
@@ -70,5 +72,7 @@ func (w *CustomerController) GetWorkOrders(ctx *gin.Context) {
 }
 
 func (w *CustomerController) GetCustomers(ctx *gin.Context) {
-
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": w.CustomerRepository.GetActives(),
+	})
 }

@@ -13,7 +13,6 @@ type PostgresCustomerRepository struct {
 
 func (p *PostgresCustomerRepository) Create(customer models.Customer) error {
 	result := p.ClientDB.Create(&customer)
-
 	return result.Error
 }
 
@@ -28,6 +27,12 @@ func (p *PostgresCustomerRepository) FindByID(ID string) (*models.Customer, erro
 }
 
 func (p *PostgresCustomerRepository) Save(customer *models.Customer) error {
-	result := p.ClientDB.Save(&customer)
+	result := p.ClientDB.Updates(customer)
 	return result.Error
+}
+
+func (p *PostgresCustomerRepository) GetActives() []models.Customer {
+	var customers []models.Customer
+	p.ClientDB.Where("is_active", true).Find(&customers)
+	return customers
 }

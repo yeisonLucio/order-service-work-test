@@ -18,8 +18,8 @@ func getRoutes(app *gin.Engine) *gin.Engine {
 
 		orders := api.Group("work-orders")
 		{
-			orders.PATCH(":id/finish", di.Container.WorkOrderController.FinishWorkOrder)
 			orders.GET("/", di.Container.WorkOrderController.GetWorkOrders)
+			orders.PATCH(":id/finish", di.Container.WorkOrderController.FinishWorkOrder)
 		}
 	}
 

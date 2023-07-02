@@ -60,11 +60,13 @@ func BuildContainer() {
 	// controllers
 
 	Container.CustomerController = &controllers.CustomerController{
-		CreateCustomerUC:  createCustomerUC,
-		CreateWorkOrderUC: createWorkOrderUC,
+		CreateCustomerUC:   createCustomerUC,
+		CreateWorkOrderUC:  createWorkOrderUC,
+		CustomerRepository: customerRepository,
 	}
 
 	Container.WorkOrderController = &controllers.WorkOrderController{
-		FinishWorkOrderUC: finishWorkOrderUC,
+		FinishWorkOrderUC:   finishWorkOrderUC,
+		WorkOrderRepository: workOrderRepository,
 	}
 }
