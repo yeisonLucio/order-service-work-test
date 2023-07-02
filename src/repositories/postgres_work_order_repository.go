@@ -45,9 +45,10 @@ func (p *PostgresWorkOrderRepository) Save(workOrder *models.WorkOrder) error {
 	return result.Error
 }
 
-func (p *PostgresWorkOrderRepository) GetAll(filters dto.WorkOrderFilters) []models.WorkOrder {
-	var workOrders []models.WorkOrder
-	query := p.ClientDB.Model(&models.WorkOrder{})
+func (p *PostgresWorkOrderRepository) GetAll(filters dto.WorkOrderFilters) []dto.WorkOrderDTO {
+	var workOrders []dto.WorkOrderDTO
+	query := p.ClientDB.Table("work_orders").
+		Select("work_orders.*, customers.*")
 
 	if filters.PlannedDateBegin != "" && filters.PlannedDateEnd != "" {
 		query = query.Where("planned_date_begin > ?", filters.PlannedDateBegin).
@@ -58,7 +59,6 @@ func (p *PostgresWorkOrderRepository) GetAll(filters dto.WorkOrderFilters) []mod
 		query = query.Where("status", filters.Status)
 	}
 
-	query.Find(&workOrders)
-
+	query.Joins("JOIN customers ON customers.id = work_orders.customer_id").Scan(&workOrders)
 	return workOrders
 }

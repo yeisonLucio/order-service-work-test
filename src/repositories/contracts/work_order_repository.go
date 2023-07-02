@@ -10,5 +10,5 @@ type WorkOrderRepository interface {
 	IsTheFirstOrder(WorkOrderID, customerID string) bool
 	FindByID(ID string) (*models.WorkOrder, error)
 	Save(workOrder *models.WorkOrder) error
-	GetAll(filters dto.WorkOrderFilters) []models.WorkOrder
+	GetAll(filters dto.WorkOrderFilters) []dto.WorkOrderDTO
 }
