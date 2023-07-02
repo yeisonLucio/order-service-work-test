@@ -36,3 +36,12 @@ func (p *PostgresCustomerRepository) GetActives() []models.Customer {
 	p.ClientDB.Where("is_active", true).Find(&customers)
 	return customers
 }
+
+func (p *PostgresCustomerRepository) DeleteByID(ID string) error {
+	result := p.ClientDB.Delete(&models.Customer{}, "id=?", ID)
+	if result.RowsAffected == 0 {
+		return errors.New("el id ingresado no existe")
+	}
+
+	return nil
+}

@@ -24,24 +24,22 @@ func (c *CreateWorkOrderUC) Execute(
 		return nil, err
 	}
 
-	beginPlannedDate, err := c.Time.FromString(createWorkOrderDTO.PlannedDateBegin)
-	if err != nil {
-		return nil, errors.New("el formato de la fecha de inicio es incorrecto")
-	}
-
-	endPlannedDate, err := c.Time.FromString(createWorkOrderDTO.PlannedDateEnd)
-	if err != nil {
-		return nil, errors.New("el formato de la fecha de fin es incorrecto")
-	}
-
 	workOrder := models.WorkOrder{
-		ID:               c.UUID.Generate(),
-		CustomerID:       customer.ID,
-		Title:            createWorkOrderDTO.Title,
-		PlannedDateBegin: &beginPlannedDate,
-		PlannedDateEnd:   &endPlannedDate,
-		Status:           models.StatusNew,
-		Type:             createWorkOrderDTO.WorkOrderType,
+		ID:         c.UUID.Generate(),
+		CustomerID: customer.ID,
+		Title:      createWorkOrderDTO.Title,
+		Status:     models.StatusNew,
+		Type:       createWorkOrderDTO.Type,
+	}
+
+	err = workOrder.SetPlannedDateBeginFromString(createWorkOrderDTO.PlannedDateBegin)
+	if err != nil {
+		return nil, err
+	}
+
+	err = workOrder.SetPlannedDateEndFromString(createWorkOrderDTO.PlannedDateEnd)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := workOrder.Validate(); err != nil {
@@ -67,10 +65,9 @@ func (c *CreateWorkOrderUC) Execute(
 
 	return &dto.CreatedWorkOrderDTO{
 		ID:               workOrder.ID.String(),
-		Title:            workOrder.Title,
 		PlannedDateBegin: workOrder.PlannedDateBegin.String(),
 		PlannedDateEnd:   workOrder.PlannedDateEnd.String(),
-		WorkOrderType:    workOrder.Type,
+		Type:             workOrder.Type,
 		Status:           workOrder.Status,
 	}, nil
 }

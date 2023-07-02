@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Customer struct {
@@ -16,4 +17,5 @@ type Customer struct {
 	IsActive   bool        `gorm:"default:false" json:"is_active"`
 	CreateAt   time.Time   `gorm:"default:now()" json:"create_at"`
 	WorkOrders []WorkOrder `gorm:"foreignKey:CustomerID" json:"-"`
+	DeletedAt  gorm.DeletedAt
 }

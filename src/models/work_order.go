@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"lucio.com/order-service/src/helpers"
 )
 
@@ -29,6 +30,7 @@ type WorkOrder struct {
 	Status           string     `gorm:"default:new" json:"status"`
 	CreatedAt        time.Time  `gorm:"default:now()" json:"create_at"`
 	Type             string     `gorm:"default:orderService" json:"type"`
+	DeletedAt        gorm.DeletedAt
 }
 
 func (w *WorkOrder) Validate() error {
@@ -44,6 +46,26 @@ func (w *WorkOrder) Validate() error {
 			limitDifference,
 		)
 	}
+
+	return nil
+}
+
+func (w *WorkOrder) SetPlannedDateBeginFromString(date string) error {
+	beginPlannedDate, err := time.Parse(time.DateTime, date)
+	if err != nil {
+		return errors.New("el formato de la fecha de inicio es incorrecto")
+	}
+	w.PlannedDateBegin = &beginPlannedDate
+
+	return nil
+}
+
+func (w *WorkOrder) SetPlannedDateEndFromString(date string) error {
+	endPlannedDate, err := time.Parse(time.DateTime, date)
+	if err != nil {
+		return errors.New("el formato de la fecha fin es incorrecto")
+	}
+	w.PlannedDateEnd = &endPlannedDate
 
 	return nil
 }

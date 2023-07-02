@@ -57,16 +57,27 @@ func BuildContainer() {
 		Time:                time,
 	}
 
+	updateCustomerUC := &usecases.UpdateCustomerUC{
+		CustomerRepository: customerRepository,
+	}
+
+	updateWorkOrderUC := &usecases.UpdateWorkOrderUC{
+		WorkOrderRepository: workOrderRepository,
+	}
+
 	// controllers
 
 	Container.CustomerController = &controllers.CustomerController{
-		CreateCustomerUC:   createCustomerUC,
-		CreateWorkOrderUC:  createWorkOrderUC,
-		CustomerRepository: customerRepository,
+		CreateCustomerUC:    createCustomerUC,
+		CreateWorkOrderUC:   createWorkOrderUC,
+		CustomerRepository:  customerRepository,
+		WorkOrderRepository: workOrderRepository,
+		UpdateCustomerUC:    updateCustomerUC,
 	}
 
 	Container.WorkOrderController = &controllers.WorkOrderController{
 		FinishWorkOrderUC:   finishWorkOrderUC,
 		WorkOrderRepository: workOrderRepository,
+		UpdateWorkOrderUC:   updateWorkOrderUC,
 	}
 }

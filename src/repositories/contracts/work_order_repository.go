@@ -11,4 +11,7 @@ type WorkOrderRepository interface {
 	FindByID(ID string) (*models.WorkOrder, error)
 	Save(workOrder *models.WorkOrder) error
 	GetAll(filters dto.WorkOrderFilters) []dto.WorkOrderDTO
+	GetByCustomerID(customerID string) []dto.WorkOrderDTO
+	DeleteByID(ID string) error
+	FindByIdWithCustomer(ID string) (*dto.WorkOrderDTO, error)
 }

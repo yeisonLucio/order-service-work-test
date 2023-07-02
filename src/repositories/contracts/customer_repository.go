@@ -9,4 +9,5 @@ type CustomerRepository interface {
 	FindByID(ID string) (*models.Customer, error)
 	Save(customer *models.Customer) error
 	GetActives() []models.Customer
+	DeleteByID(ID string) error
 }
