@@ -21,18 +21,18 @@ const (
 var AllowedTypes = []string{InactiveCustomerType, ServiceOrderType}
 
 type WorkOrder struct {
-	ID               uuid.UUID  `gorm:"type:uuid;primaryKey"`
-	CustomerID       uuid.UUID  `gorm:"type:uuid;not null"`
-	Title            string     `gorm:"not null"`
-	PlannedDateBegin *time.Time `gorm:"not null"`
-	PlannedDateEnd   *time.Time `gorm:"not null"`
-	Status           string     `gorm:"default:new"`
-	CreatedAt        time.Time  `gorm:"default:now()"`
-	Type             string     `gorm:"default:orderService"`
+	ID               uuid.UUID  `gorm:"type:uuid;primaryKey" json:"id"`
+	CustomerID       uuid.UUID  `gorm:"type:uuid;not null" json:"customer_id"`
+	Title            string     `gorm:"not null" json:"title"`
+	PlannedDateBegin *time.Time `gorm:"not null" json:"planned_date_begin"`
+	PlannedDateEnd   *time.Time `gorm:"not null" json:"planned_date_end"`
+	Status           string     `gorm:"default:new" json:"status"`
+	CreatedAt        time.Time  `gorm:"default:now()" json:"create_at"`
+	Type             string     `gorm:"default:orderService" json:"type"`
 }
 
 func (w *WorkOrder) Validate() error {
-	if !helpers.StringContains(AllowedTypes, string(w.Type)) {
+	if !helpers.StringContains(AllowedTypes, w.Type) {
 		return errors.New("el tipo ingresado no esta permitido")
 	}
 

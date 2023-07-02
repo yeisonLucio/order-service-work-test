@@ -4,4 +4,7 @@ import "lucio.com/order-service/src/models"
 
 type WorkOrderRepository interface {
 	Create(workOrder models.WorkOrder) error
+	IsTheFirstOrder(WorkOrderID, customerID string) bool
+	FindByID(ID string) (*models.WorkOrder, error)
+	Save(workOrder *models.WorkOrder) error
 }

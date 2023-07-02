@@ -1,4 +1,4 @@
-package database
+package postgres
 
 import (
 	"fmt"
@@ -10,11 +10,7 @@ import (
 
 var DB *gorm.DB
 
-func Connect() (err error) {
-	if DB != nil {
-		return nil
-	}
-
+func Connect() {
 	url := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		os.Getenv("DB_HOST"),
@@ -23,14 +19,12 @@ func Connect() (err error) {
 		os.Getenv("DB_NAME"),
 		os.Getenv("DB_PORT"),
 	)
+	var err error
 
 	DB, err = gorm.Open(postgres.Open(url), &gorm.Config{})
-
 	if err != nil {
-		return
+		panic(err)
 	}
 
 	fmt.Println("database connected")
-
-	return nil
 }

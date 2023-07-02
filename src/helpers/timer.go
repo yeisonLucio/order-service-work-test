@@ -17,6 +17,5 @@ func (d *DefaultTimer) FromString(date string) (time.Time, error) {
 
 func (d *DefaultTimer) Now() *time.Time {
 	now := time.Now()
-
 	return &now
 }

@@ -6,7 +6,6 @@ import (
 )
 
 func getRoutes(app *gin.Engine) *gin.Engine {
-
 	api := app.Group("api/v1")
 	{
 		customers := api.Group("customers")
@@ -19,8 +18,8 @@ func getRoutes(app *gin.Engine) *gin.Engine {
 
 		orders := api.Group("work-orders")
 		{
-			orders.GET("/", di.Container.WorkOrderController.GetWorkOrders)
 			orders.PATCH(":id/finish", di.Container.WorkOrderController.FinishWorkOrder)
+			orders.GET("/", di.Container.WorkOrderController.GetWorkOrders)
 		}
 	}
 

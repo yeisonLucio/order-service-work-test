@@ -1,8 +1,9 @@
 package di
 
 import (
+	"lucio.com/order-service/src/config/postgres"
+	"lucio.com/order-service/src/config/redis"
 	"lucio.com/order-service/src/controllers"
-	"lucio.com/order-service/src/database"
 	"lucio.com/order-service/src/helpers"
 	"lucio.com/order-service/src/repositories"
 	"lucio.com/order-service/src/usecases"
@@ -24,11 +25,15 @@ func BuildContainer() {
 	// repositories
 
 	customerRepository := &repositories.PostgresCustomerRepository{
-		ClientDB: database.DB,
+		ClientDB: postgres.DB,
 	}
 
 	workOrderRepository := &repositories.PostgresWorkOrderRepository{
-		ClientDB: database.DB,
+		ClientDB: postgres.DB,
+	}
+
+	eventRepository := &repositories.RedisEventRepository{
+		RedisClient: redis.RedisClient,
 	}
 
 	// use cases
@@ -45,6 +50,13 @@ func BuildContainer() {
 		Time:                time,
 	}
 
+	finishWorkOrderUC := &usecases.FinishWorkOrderUC{
+		WorkOrderRepository: workOrderRepository,
+		CustomerRepository:  customerRepository,
+		EventRepository:     eventRepository,
+		Time:                time,
+	}
+
 	// controllers
 
 	Container.CustomerController = &controllers.CustomerController{
@@ -52,5 +64,7 @@ func BuildContainer() {
 		CreateWorkOrderUC: createWorkOrderUC,
 	}
 
-	Container.WorkOrderController = &controllers.WorkOrderController{}
+	Container.WorkOrderController = &controllers.WorkOrderController{
+		FinishWorkOrderUC: finishWorkOrderUC,
+	}
 }

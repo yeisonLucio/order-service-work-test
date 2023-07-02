@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/joho/godotenv"
 	"lucio.com/order-service/src"
-	"lucio.com/order-service/src/database"
+	"lucio.com/order-service/src/config/postgres"
+	"lucio.com/order-service/src/config/redis"
 	"lucio.com/order-service/src/di"
 )
 
@@ -14,14 +13,9 @@ func main() {
 		panic(err)
 	}
 
-	if err := database.Connect(); err != nil {
-		panic(err)
-	}
-
-	if err := database.RunMigrations(); err != nil {
-		fmt.Println("error corriendo las migraciones")
-	}
-
+	postgres.Connect()
+	postgres.RunMigrations()
+	redis.Connect()
 	di.BuildContainer()
 
 	app := src.GetApp()
