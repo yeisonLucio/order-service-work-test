@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
+	"lucio.com/order-service/src/dto"
 	"lucio.com/order-service/src/models"
 )
 
@@ -31,9 +32,9 @@ func (p *PostgresCustomerRepository) Save(customer *models.Customer) error {
 	return result.Error
 }
 
-func (p *PostgresCustomerRepository) GetActives() []models.Customer {
-	var customers []models.Customer
-	p.ClientDB.Where("is_active", true).Find(&customers)
+func (p *PostgresCustomerRepository) GetActives() []dto.CustomerDTO {
+	var customers []dto.CustomerDTO
+	p.ClientDB.Model(&models.Customer{}).Where("is_active", true).Scan(&customers)
 	return customers
 }
 
@@ -44,4 +45,19 @@ func (p *PostgresCustomerRepository) DeleteByID(ID string) error {
 	}
 
 	return nil
+}
+
+func (p *PostgresCustomerRepository) GetByID(ID string) (*dto.CustomerDTO, error) {
+	var customer dto.CustomerDTO
+
+	result := p.ClientDB.
+		Model(&models.Customer{}).
+		Where("id", ID).
+		Scan(&customer)
+
+	if result.RowsAffected == 0 {
+		return nil, errors.New("cliente no encontrado")
+	}
+
+	return &customer, nil
 }

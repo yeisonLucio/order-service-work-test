@@ -1,0 +1,465 @@
+definitions:
+  CreateCustomer:
+    properties:
+      address:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+    type: object
+  CreateWorkOrder:
+    properties:
+      customer_id:
+        type: string
+      planned_date_begin:
+        type: string
+      planned_date_end:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  CreatedCustomer:
+    properties:
+      address:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      last_name:
+        type: string
+    type: object
+  CreatedWorkOrder:
+    properties:
+      customer_id:
+        type: string
+      id:
+        type: string
+      planned_date_begin:
+        type: string
+      planned_date_end:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  Customer:
+    properties:
+      address:
+        type: string
+      end_date:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      last_name:
+        type: string
+      start_date:
+        type: string
+    type: object
+  UpdateCustomer:
+    properties:
+      address:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+    type: object
+  UpdateWorkOrder:
+    properties:
+      id:
+        type: string
+      planned_date_begin:
+        type: string
+      planned_date_end:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  UpdatedWorkOrder:
+    properties:
+      id:
+        type: string
+      planned_date_begin:
+        type: string
+      planned_date_end:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  WorkOrder:
+    properties:
+      customer:
+        $ref: '#/definitions/Customer'
+      id:
+        type: string
+      planned_date_begin:
+        type: string
+      planned_date_end:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  errorResponse:
+    properties:
+      id:
+        enum:
+        - bad_request
+        - unexpected_error
+        - record_not_found
+        example: string
+        type: string
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /customers:
+    get:
+      consumes:
+      - application/json
+      description: Este servicio permite obtener todos los clientes activos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/Customer'
+            type: array
+      summary: Servicio para obtener todos los clientes activos
+      tags:
+      - Customers
+    post:
+      consumes:
+      - application/json
+      description: Permite crear un determinado cliente
+      parameters:
+      - description: Body data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateCustomer'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreatedCustomer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para crear clientes
+      tags:
+      - Customers
+  /customers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Este servicio permite realizar la eliminación de un cliente
+      parameters:
+      - description: id del cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para eliminar un cliente
+      tags:
+      - Customers
+    get:
+      consumes:
+      - application/json
+      description: Este servicio permite obtener un cliente
+      parameters:
+      - description: id del cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para obtener un cliente
+      tags:
+      - Customers
+    put:
+      consumes:
+      - application/json
+      description: Este servicio permite realizar la actualización de un cliente
+      parameters:
+      - description: id del cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Body data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateCustomer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Customer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para actualizar un cliente
+      tags:
+      - Customers
+  /customers/{id}/work-orders:
+    get:
+      consumes:
+      - application/json
+      description: Este servicio permite obtener todas las ordenes de servicio de
+        un cliente
+      parameters:
+      - description: id del cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/WorkOrder'
+            type: array
+      summary: Servicio para obtener las ordenes de servicio de un cliente
+      tags:
+      - Customers
+    post:
+      consumes:
+      - application/json
+      description: Permite crear una orden de servicio para un cliente
+      parameters:
+      - description: id del cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Body data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateWorkOrder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreatedWorkOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para crear una orden de servicio para un cliente
+      tags:
+      - Customers
+  /work-orders:
+    get:
+      consumes:
+      - application/json
+      description: Este servicio permite filtrar las ordenes de servicio
+      parameters:
+      - description: fecha de planeación inicial
+        in: query
+        name: planned_date_begin
+        required: true
+        type: string
+      - description: fecha de planeación final
+        in: query
+        name: planned_date_end
+        required: true
+        type: string
+      - description: Estado de la orden de servicio
+        in: query
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/WorkOrder'
+            type: array
+      summary: Servicio para obtener las ordenes de servicio tendiendo en cuenta los
+        filtros
+      tags:
+      - WorkOrders
+  /work-orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Este servicio permite eliminar una orden de servicio
+      parameters:
+      - description: id de la orden de servicio
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para eliminar una orden de servicio
+      tags:
+      - WorkOrders
+    get:
+      consumes:
+      - application/json
+      description: Este servicio permite obtener una orden de servicio
+      parameters:
+      - description: id de la orden de servicio
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/WorkOrder'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para obtener una orden de servicio
+      tags:
+      - WorkOrders
+    put:
+      consumes:
+      - application/json
+      description: Este servicio permite actualizar una orden de servicio
+      parameters:
+      - description: id de la orden de servicio
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Body data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/UpdateWorkOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdatedWorkOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para actualizar una orden de servicio
+      tags:
+      - WorkOrders
+  /work-orders/{id}/finish:
+    patch:
+      consumes:
+      - application/json
+      description: Este servicio permite finalizar una orden de servicio
+      parameters:
+      - description: id de la orden de servicio
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errorResponse'
+      summary: Servicio para finalizar una orden de servicio
+      tags:
+      - WorkOrders
+swagger: "2.0"

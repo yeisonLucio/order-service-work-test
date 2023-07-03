@@ -1,11 +1,20 @@
 package src
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	docs "lucio.com/order-service/docs"
 	"lucio.com/order-service/src/di"
 )
 
 func getRoutes(app *gin.Engine) *gin.Engine {
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%s", os.Getenv("APP_PORT"))
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	api := app.Group("api/v1")
 	{
 		customers := api.Group("customers")

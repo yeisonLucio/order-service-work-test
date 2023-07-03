@@ -65,6 +65,8 @@ func (c *CreateWorkOrderUC) Execute(
 
 	return &dto.CreatedWorkOrderDTO{
 		ID:               workOrder.ID.String(),
+		Title:            workOrder.Title,
+		CustomerID:       workOrder.CustomerID.String(),
 		PlannedDateBegin: workOrder.PlannedDateBegin.String(),
 		PlannedDateEnd:   workOrder.PlannedDateEnd.String(),
 		Type:             workOrder.Type,

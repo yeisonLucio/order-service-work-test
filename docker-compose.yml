@@ -1,8 +1,19 @@
 version: '3.9'
 
 services:
+  app:
+      build: .
+      ports:
+        - '${APP_PORT:-8082}:8080'
+      restart: on-failure
+      depends_on:
+        - postgres
+        - redis
+      networks:
+        - networkapp
   postgres:
     image: postgres:alpine3.18
+    restart: always
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -11,6 +22,8 @@ services:
       - '${DB_PORT:-5432}:5432'
     volumes:
       - 'postgres-db:/var/lib/postgresql/data'
+    networks:
+      - networkapp
 
   redis:
     image: redis:alpine3.18
@@ -20,7 +33,13 @@ services:
       REDIS_PASSWORD: '${REDIS_PASSWORD}'
     volumes:
       - 'redis-db:/data'
+    networks:
+      - networkapp
       
 volumes:
   postgres-db:
   redis-db:
+
+networks:
+  networkapp:
+    driver: bridge
