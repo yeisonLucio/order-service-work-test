@@ -237,7 +237,6 @@ func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 					Title:            "test",
 					PlannedDateBegin: "test",
 					PlannedDateEnd:   "test",
-					Type:             "test",
 				}
 				d.UpdateWorkOrderUC.
 					On("Execute", input).

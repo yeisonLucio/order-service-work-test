@@ -14,7 +14,7 @@ type RedisEventRepository struct {
 	RedisClient *redis.Client
 }
 
-func (r *RedisEventRepository) NotifyWorkOrderFinished(workOrder models.WorkOrder) error {
+func (r *RedisEventRepository) NotifyWorkOrderFinished(workOrder *models.WorkOrder) error {
 	object, err := json.Marshal(workOrder)
 	if err != nil {
 		return err

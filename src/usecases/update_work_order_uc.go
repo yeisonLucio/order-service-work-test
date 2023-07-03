@@ -28,8 +28,13 @@ func (u *UpdateWorkOrderUC) Execute(
 		return nil, err
 	}
 
-	workOrder.Title = updateWorkOrder.Title
-	workOrder.Type = updateWorkOrder.Type
+	if updateWorkOrder.Title != "" {
+		workOrder.Title = updateWorkOrder.Title
+	}
+
+	if err := workOrder.Validate(); err != nil {
+		return nil, err
+	}
 
 	if err := u.WorkOrderRepository.Save(workOrder); err != nil {
 		return nil, err

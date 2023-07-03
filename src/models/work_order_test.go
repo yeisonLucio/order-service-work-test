@@ -10,6 +10,7 @@ func TestWorkOrder_Validate(t *testing.T) {
 		PlannedDateBegin *time.Time
 		PlannedDateEnd   *time.Time
 		Type             string
+		Title            string
 	}
 	beginDate := time.Now()
 	endDate := beginDate.Add(time.Hour * 3)
@@ -22,9 +23,16 @@ func TestWorkOrder_Validate(t *testing.T) {
 		expectedError error
 	}{
 		{
+			name:          "should return an error when title is empty",
+			fields:        fields{},
+			wantErr:       true,
+			expectedError: ErrInvalidTitle,
+		},
+		{
 			name: "should return an error when type is not valid",
 			fields: fields{
-				Type: "fake",
+				Title: "title",
+				Type:  "fake",
 			},
 			wantErr:       true,
 			expectedError: ErrInvalidType,
@@ -32,6 +40,7 @@ func TestWorkOrder_Validate(t *testing.T) {
 		{
 			name: "should return an error when range date is not valid",
 			fields: fields{
+				Title:            "title",
 				Type:             ServiceOrderType,
 				PlannedDateBegin: &beginDate,
 				PlannedDateEnd:   &endDate,
@@ -42,6 +51,7 @@ func TestWorkOrder_Validate(t *testing.T) {
 		{
 			name: "should return nil when validations pass",
 			fields: fields{
+				Title:            "title",
 				Type:             ServiceOrderType,
 				PlannedDateBegin: &beginDate,
 				PlannedDateEnd:   &correctEndDate,
@@ -54,6 +64,7 @@ func TestWorkOrder_Validate(t *testing.T) {
 				PlannedDateBegin: tt.fields.PlannedDateBegin,
 				PlannedDateEnd:   tt.fields.PlannedDateEnd,
 				Type:             tt.fields.Type,
+				Title:            tt.fields.Title,
 			}
 			err := w.Validate()
 

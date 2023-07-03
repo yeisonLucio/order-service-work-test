@@ -24,6 +24,7 @@ var (
 	ErrInvalidDates    = fmt.Errorf("rango de fechas invalido, no puede ser mayor que %v horas", dateRange)
 	ErrBeginDateFormat = errors.New("formato incorrecto para planned_date_begin")
 	ErrEndDateFormat   = errors.New("formato incorrecto para planned_date_end")
+	ErrInvalidTitle    = errors.New("el titulo de la orden de servicio es requerido")
 	AllowedTypes       = []string{InactiveCustomerType, ServiceOrderType}
 )
 
@@ -40,6 +41,10 @@ type WorkOrder struct {
 }
 
 func (w *WorkOrder) Validate() error {
+	if w.Title == "" {
+		return ErrInvalidTitle
+	}
+
 	if !helpers.StringContains(AllowedTypes, w.Type) {
 		return ErrInvalidType
 	}

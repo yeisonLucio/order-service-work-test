@@ -39,7 +39,6 @@ type UpdateWorkOrder struct {
 	Title            string `json:"title"`
 	PlannedDateBegin string `json:"planned_date_begin"`
 	PlannedDateEnd   string `json:"planned_date_end"`
-	Type             string `json:"type"`
 } // @name UpdateWorkOrder
 
 type UpdatedWorkOrder struct {

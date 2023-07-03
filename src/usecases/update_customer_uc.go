@@ -18,9 +18,17 @@ func (u *UpdateCustomerUC) Execute(
 		return nil, err
 	}
 
-	customer.Address = updateCustomerDTO.Address
-	customer.FirstName = updateCustomerDTO.FirstName
-	customer.LastName = updateCustomerDTO.LastName
+	if updateCustomerDTO.Address != "" {
+		customer.Address = updateCustomerDTO.Address
+	}
+
+	if updateCustomerDTO.FirstName != "" {
+		customer.FirstName = updateCustomerDTO.FirstName
+	}
+
+	if updateCustomerDTO.LastName != "" {
+		customer.LastName = updateCustomerDTO.LastName
+	}
 
 	if err := u.CustomerRepository.Save(customer); err != nil {
 		return nil, err

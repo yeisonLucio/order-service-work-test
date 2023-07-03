@@ -37,7 +37,7 @@ func (f *FinishWorkOrderUC) Execute(ID string) error {
 		return err
 	}
 
-	f.EventRepository.NotifyWorkOrderFinished(*workOrder)
+	f.EventRepository.NotifyWorkOrderFinished(workOrder)
 
 	return nil
 }

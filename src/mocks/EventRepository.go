@@ -13,11 +13,11 @@ type EventRepository struct {
 }
 
 // NotifyWorkOrderFinished provides a mock function with given fields: payload
-func (_m *EventRepository) NotifyWorkOrderFinished(payload models.WorkOrder) error {
+func (_m *EventRepository) NotifyWorkOrderFinished(payload *models.WorkOrder) error {
 	ret := _m.Called(payload)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(models.WorkOrder) error); ok {
+	if rf, ok := ret.Get(0).(func(*models.WorkOrder) error); ok {
 		r0 = rf(payload)
 	} else {
 		r0 = ret.Error(0)
