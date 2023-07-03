@@ -22,6 +22,10 @@ func (c *CreateCustomerUC) Execute(
 		Address:   createCustomerDTO.Address,
 	}
 
+	if err := customer.Validate(); err != nil {
+		return nil, err
+	}
+
 	if err := c.CustomerRepository.Create(customer); err != nil {
 		return nil, err
 	}

@@ -18,12 +18,12 @@ func (u *UpdateWorkOrderUC) Execute(
 		return nil, err
 	}
 
-	err = workOrder.SetPlannedDateBeginFromString(updateWorkOrder.PlannedDateBegin)
+	err = workOrder.SetPlannedDateBegin(updateWorkOrder.PlannedDateBegin)
 	if err != nil {
 		return nil, err
 	}
 
-	err = workOrder.SetPlannedDateEndFromString(updateWorkOrder.PlannedDateEnd)
+	err = workOrder.SetPlannedDateEnd(updateWorkOrder.PlannedDateEnd)
 	if err != nil {
 		return nil, err
 	}

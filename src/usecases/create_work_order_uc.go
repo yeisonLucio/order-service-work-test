@@ -32,12 +32,12 @@ func (c *CreateWorkOrderUC) Execute(
 		Type:       createWorkOrderDTO.Type,
 	}
 
-	err = workOrder.SetPlannedDateBeginFromString(createWorkOrderDTO.PlannedDateBegin)
+	err = workOrder.SetPlannedDateBegin(createWorkOrderDTO.PlannedDateBegin)
 	if err != nil {
 		return nil, err
 	}
 
-	err = workOrder.SetPlannedDateEndFromString(createWorkOrderDTO.PlannedDateEnd)
+	err = workOrder.SetPlannedDateEnd(createWorkOrderDTO.PlannedDateEnd)
 	if err != nil {
 		return nil, err
 	}

@@ -1,10 +1,17 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+)
+
+var (
+	ErrInvalidCustomerFirstName = errors.New("el campo first_name es requerido")
+	ErrInvalidCustomerLastName  = errors.New("el campo last_name es requerido")
+	ErrInvalidCustomerAddress   = errors.New("el campo address es requerido")
 )
 
 type Customer struct {
@@ -18,4 +25,18 @@ type Customer struct {
 	CreateAt   time.Time   `gorm:"default:now()" json:"create_at"`
 	WorkOrders []WorkOrder `gorm:"foreignKey:CustomerID" json:"-"`
 	DeletedAt  gorm.DeletedAt
+}
+
+func (c *Customer) Validate() error {
+	if c.FirstName == "" {
+		return ErrInvalidCustomerFirstName
+	}
+	if c.LastName == "" {
+		return ErrInvalidCustomerLastName
+	}
+	if c.Address == "" {
+		return ErrInvalidCustomerAddress
+	}
+
+	return nil
 }

@@ -16,10 +16,16 @@ const (
 	StatusNew            string  = "new"
 	StatusDone           string  = "done"
 	StatusCancelled      string  = "cancelled"
-	limitDifference      float64 = 2
+	dateRange            float64 = 2
 )
 
-var AllowedTypes = []string{InactiveCustomerType, ServiceOrderType}
+var (
+	ErrInvalidType     = errors.New("el tipo ingresado no esta permitido")
+	ErrInvalidDates    = fmt.Errorf("rango de fechas invalido, no puede ser mayor que %v horas", dateRange)
+	ErrBeginDateFormat = errors.New("formato incorrecto para planned_date_begin")
+	ErrEndDateFormat   = errors.New("formato incorrecto para planned_date_end")
+	AllowedTypes       = []string{InactiveCustomerType, ServiceOrderType}
+)
 
 type WorkOrder struct {
 	ID               uuid.UUID  `gorm:"type:uuid;primaryKey" json:"id"`
@@ -35,35 +41,32 @@ type WorkOrder struct {
 
 func (w *WorkOrder) Validate() error {
 	if !helpers.StringContains(AllowedTypes, w.Type) {
-		return errors.New("el tipo ingresado no esta permitido")
+		return ErrInvalidType
 	}
 
 	difference := w.PlannedDateEnd.Sub(*w.PlannedDateBegin)
 
-	if difference.Hours() > limitDifference {
-		return fmt.Errorf(
-			"la diferencia de las fechas no puede ser mayor a %v horas",
-			limitDifference,
-		)
+	if difference.Hours() > dateRange {
+		return ErrInvalidDates
 	}
 
 	return nil
 }
 
-func (w *WorkOrder) SetPlannedDateBeginFromString(date string) error {
+func (w *WorkOrder) SetPlannedDateBegin(date string) error {
 	beginPlannedDate, err := time.Parse(time.DateTime, date)
 	if err != nil {
-		return errors.New("el formato de la fecha de inicio es incorrecto")
+		return ErrBeginDateFormat
 	}
 	w.PlannedDateBegin = &beginPlannedDate
 
 	return nil
 }
 
-func (w *WorkOrder) SetPlannedDateEndFromString(date string) error {
+func (w *WorkOrder) SetPlannedDateEnd(date string) error {
 	endPlannedDate, err := time.Parse(time.DateTime, date)
 	if err != nil {
-		return errors.New("el formato de la fecha fin es incorrecto")
+		return ErrEndDateFormat
 	}
 	w.PlannedDateEnd = &endPlannedDate
 
