@@ -18,5 +18,5 @@ Para arrancar ejecutar la API REST se deben realizar los siguientes pasos:
 2. Copiar el contenido del archivo `.env.example` que se encuentra en la raíz del proyecto
 3. Ejecutar el comando `docker compose up` estando en la raíz del proyecto
 4. Verificar la documentación de la API que se puede encontrar en la ruta `http://localhost:{APP_PORT}/swagger/index.html` (tenga en cuenta que {APP_PORT} se debe cambiar por el puerto de la aplicación configurado en el archivo `.env`)
-5. Finalmente teniendo en cuenta la documentación puede probar la API rest por medio de algún cliente que le permita realizar peticiones
+5. Finalmente teniendo en cuenta la documentación puede probar la API rest por medio de algún cliente que le permita realizar peticiones.
 
