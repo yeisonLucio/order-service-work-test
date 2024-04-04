@@ -5,7 +5,6 @@ import (
 	"lucio.com/order-service/src"
 	"lucio.com/order-service/src/config/postgres"
 	"lucio.com/order-service/src/config/redis"
-	"lucio.com/order-service/src/di"
 )
 
 func main() {
@@ -16,9 +15,7 @@ func main() {
 	postgres.Connect()
 	postgres.RunMigrations()
 	redis.Connect()
-	di.BuildContainer()
 
 	app := src.GetApp()
-
 	app.Run(":8080")
 }

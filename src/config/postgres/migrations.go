@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"lucio.com/order-service/src/models"
+	"lucio.com/order-service/src/infra/models"
 )
 
 func RunMigrations() {
