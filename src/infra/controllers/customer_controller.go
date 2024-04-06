@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"lucio.com/order-service/src/domain/customer/repositories"
 	ucConsumer "lucio.com/order-service/src/domain/customer/usecases"
 	"lucio.com/order-service/src/domain/workorder/dtos"
@@ -19,6 +20,7 @@ type CustomerController struct {
 	CustomerRepository  repositories.CustomerRepository
 	WorkOrderRepository reposWorkOrder.WorkOrderRepository
 	UpdateCustomerUC    ucConsumer.UpdateCustomerUC
+	Logger              *logrus.Logger
 }
 
 // @Summary Servicio para crear clientes
@@ -27,23 +29,35 @@ type CustomerController struct {
 // @Accept json
 // @Produce json
 // @Param body body dto.CreateCustomerDTO true "Body data"
-// @Success 201 {object} dto.CreatedCustomerDTO
+// @Success 201 {object} dto.CreatedCustomerResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /customers [post]
 func (c *CustomerController) CreateCustomer(ctx *gin.Context) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "CreateCustomer",
+		"request": ctx.Request,
+	})
+
 	var createCustomerDTO customer.CreateCustomer
 
 	customerEntity, err := createCustomerDTO.ValidateAndGetEntity(ctx)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
 		return
 	}
 
+	log = log.WithField("customer", customerEntity)
+
 	customer, err := c.CreateCustomerUC.Execute(*customerEntity)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -65,18 +79,29 @@ func (c *CustomerController) CreateCustomer(ctx *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /customers/{id}/work-orders [post]
 func (c *CustomerController) CreateWorkOrder(ctx *gin.Context) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "CreateWorkOrder",
+		"request": ctx.Request,
+	})
 	var createWorkOrderDTO workorder.CreateWorkOrder
 
 	workOrderEntity, err := createWorkOrderDTO.ValidateAndGetEntity(ctx)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
 		return
 	}
 
+	log = log.WithField("workOrder", workOrderEntity)
+
 	workOrder, err := c.CreateWorkOrderUC.Execute(*workOrderEntity)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -94,12 +119,12 @@ func (c *CustomerController) CreateWorkOrder(ctx *gin.Context) {
 // @param id path string true "id del cliente"
 // @Success 200 {array} dto.WorkOrderDTO
 // @Router /customers/{id}/work-orders [get]
-func (w *CustomerController) GetWorkOrders(ctx *gin.Context) {
+func (c *CustomerController) GetWorkOrders(ctx *gin.Context) {
 	filters := dtos.WorkOrderFilters{
 		ID: ctx.Param("id"),
 	}
 
-	workOrders := w.WorkOrderRepository.GetFiltered(filters)
+	workOrders := c.WorkOrderRepository.GetFiltered(filters)
 	ctx.JSON(http.StatusOK, workOrders)
 }
 
@@ -123,9 +148,16 @@ func (w *CustomerController) GetCustomers(ctx *gin.Context) {
 // @Success 200 {object} dto.CustomerDTO
 // @Failure 404 {object} dto.ErrorResponse
 // @Router /customers/{id} [get]
-func (w *CustomerController) GetCustomer(ctx *gin.Context) {
-	customer, err := w.CustomerRepository.FindByID(ctx.Param("id"))
+func (c *CustomerController) GetCustomer(ctx *gin.Context) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "GetCustomer",
+		"request": ctx.Request,
+	})
+	customer, err := c.CustomerRepository.FindByID(ctx.Param("id"))
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -146,11 +178,18 @@ func (w *CustomerController) GetCustomer(ctx *gin.Context) {
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /customers/{id} [put]
-func (w *CustomerController) UpdateCustomer(ctx *gin.Context) {
+func (c *CustomerController) UpdateCustomer(ctx *gin.Context) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "UpdateCustomer",
+		"request": ctx.Request,
+	})
 	var updateCustomerDTO customer.UpdateCustomer
 
 	entity, err := updateCustomerDTO.ValidateAndGetEntity(ctx)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -158,9 +197,12 @@ func (w *CustomerController) UpdateCustomer(ctx *gin.Context) {
 	}
 
 	entity.ID = ctx.Param("id")
+	log = log.WithField("customerToUpdate", entity)
 
-	updatedCustomer, err := w.UpdateCustomerUC.Execute(*entity)
+	updatedCustomer, err := c.UpdateCustomerUC.Execute(*entity)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -179,8 +221,16 @@ func (w *CustomerController) UpdateCustomer(ctx *gin.Context) {
 // @Success 204 "No Content"
 // @Failure 404 {object} dto.ErrorResponse
 // @Router /customers/{id} [delete]
-func (w *CustomerController) DeleteCustomer(ctx *gin.Context) {
-	if err := w.CustomerRepository.DeleteByID(ctx.Param("id")); err != nil {
+func (c *CustomerController) DeleteCustomer(ctx *gin.Context) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "DeleteCustomer",
+		"request": ctx.Request,
+	})
+
+	if err := c.CustomerRepository.DeleteByID(ctx.Param("id")); err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})

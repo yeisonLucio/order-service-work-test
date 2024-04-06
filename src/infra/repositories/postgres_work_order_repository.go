@@ -3,6 +3,7 @@ package repositories
 import (
 	"errors"
 
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"lucio.com/order-service/src/domain/common/dtos"
 	workOrderDtos "lucio.com/order-service/src/domain/workorder/dtos"
@@ -12,14 +13,23 @@ import (
 
 type PostgresWorkOrderRepository struct {
 	ClientDB *gorm.DB
+	Logger   *logrus.Logger
 }
 
 func (p *PostgresWorkOrderRepository) Create(workOrder *entities.WorkOrder) *dtos.CustomError {
+	log := p.Logger.WithFields(logrus.Fields{
+		"file":   "postgres_customer_repository",
+		"method": "Create",
+	})
+
 	var workOrderDB models.WorkOrder
 	workOrderDB.NewFromEntity(workOrder)
 
+	log = log.WithField("workOrderDB", workOrderDB)
+
 	result := p.ClientDB.Create(&workOrderDB)
 	if result.Error != nil {
+		log.WithError(result.Error).Error()
 		return &dtos.CustomError{
 			Code:  500,
 			Error: result.Error,
@@ -41,9 +51,16 @@ func (p *PostgresWorkOrderRepository) IsTheFirstOrder(customerID string) bool {
 }
 
 func (p *PostgresWorkOrderRepository) FindByID(ID string) (*entities.WorkOrder, *dtos.CustomError) {
+	log := p.Logger.WithFields(logrus.Fields{
+		"file":   "postgres_customer_repository",
+		"method": "FindByID",
+		"id":     ID,
+	})
+
 	var workOrder models.WorkOrder
 
 	if result := p.ClientDB.First(&workOrder, "id=?", ID); result.RowsAffected == 0 {
+		log.WithError(result.Error).Error()
 		return nil, &dtos.CustomError{
 			Code:  404,
 			Error: errors.New("orden de servicio no encontrada"),
@@ -54,11 +71,19 @@ func (p *PostgresWorkOrderRepository) FindByID(ID string) (*entities.WorkOrder, 
 }
 
 func (p *PostgresWorkOrderRepository) Save(workOrder *entities.WorkOrder) *dtos.CustomError {
+	log := p.Logger.WithFields(logrus.Fields{
+		"file":   "postgres_customer_repository",
+		"method": "save",
+	})
+
 	var workOrderDB models.WorkOrder
 	workOrderDB.FromEntity(workOrder)
 
+	log = log.WithField("workOrderDB", workOrderDB)
+
 	result := p.ClientDB.Updates(workOrder)
 	if result.Error != nil {
+		log.WithError(result.Error).Error()
 		return &dtos.CustomError{
 			Code:  500,
 			Error: result.Error,
@@ -66,6 +91,8 @@ func (p *PostgresWorkOrderRepository) Save(workOrder *entities.WorkOrder) *dtos.
 	}
 
 	if result.RowsAffected == 0 {
+		log.Error("orden de servicio no actualizada")
+
 		return &dtos.CustomError{
 			Code:  500,
 			Error: errors.New("orden de servicio no actualizada"),
@@ -123,8 +150,15 @@ func (p *PostgresWorkOrderRepository) GetFiltered(filters workOrderDtos.WorkOrde
 }
 
 func (p *PostgresWorkOrderRepository) DeleteByID(ID string) *dtos.CustomError {
+	log := p.Logger.WithFields(logrus.Fields{
+		"file":   "postgres_customer_repository",
+		"method": "DeleteByID",
+	})
+
 	result := p.ClientDB.Delete(&models.WorkOrder{}, "id=?", ID)
 	if result.RowsAffected == 0 {
+		log.Error("el id ingresado no existe")
+
 		return &dtos.CustomError{
 			Code:  404,
 			Error: errors.New("el id ingresado no existe"),

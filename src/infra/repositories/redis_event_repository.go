@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/go-redis/redis"
+	"github.com/sirupsen/logrus"
 	"lucio.com/order-service/src/domain/common/dtos"
 	"lucio.com/order-service/src/domain/workorder/entities"
 )
@@ -12,11 +13,19 @@ const workOrderUpdatedStream string = "work-order-updated"
 
 type RedisEventRepository struct {
 	RedisClient *redis.Client
+	Logger      *logrus.Logger
 }
 
 func (r *RedisEventRepository) NotifyWorkOrderFinished(payload *entities.WorkOrder) *dtos.CustomError {
+	log := r.Logger.WithFields(logrus.Fields{
+		"file":    "postgres_customer_repository",
+		"method":  "FindByID",
+		"payload": payload,
+	})
+
 	object, err := json.Marshal(payload)
 	if err != nil {
+		log.WithError(err).Error()
 		return &dtos.CustomError{
 			Code:  500,
 			Error: err,
@@ -34,6 +43,7 @@ func (r *RedisEventRepository) NotifyWorkOrderFinished(payload *entities.WorkOrd
 	)
 
 	if result.Err() != nil {
+		log.WithError(err).Error()
 		return &dtos.CustomError{
 			Code:  500,
 			Error: result.Err(),

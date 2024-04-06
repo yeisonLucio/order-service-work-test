@@ -10,6 +10,7 @@ import (
 func NewCreateCustomerUC() ICustomerUC.CreateCustomerUC {
 	return &customer.CreateCustomerUC{
 		CustomerRepository: NewPostgresCustomerRepository(),
+		Logger:             NewLogrusLogger(),
 	}
 }
 
@@ -18,6 +19,7 @@ func NewCreateWorkOrderUC() IWorkOrderUC.CreateWorkOrderUC {
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
 		CustomerRepository:  NewPostgresCustomerRepository(),
 		Time:                NewTimeLib(),
+		Logger:              NewLogrusLogger(),
 	}
 }
 
@@ -27,17 +29,20 @@ func NewFinishWorkOrderUC() IWorkOrderUC.FinishWorkOrderUC {
 		CustomerRepository:  NewPostgresCustomerRepository(),
 		EventRepository:     NewRedisEventRepository(),
 		Time:                NewTimeLib(),
+		Logger:              NewLogrusLogger(),
 	}
 }
 
 func NewUpdateCustomerUC() ICustomerUC.UpdateCustomerUC {
 	return &customer.UpdateCustomerUC{
 		CustomerRepository: NewPostgresCustomerRepository(),
+		Logger:             NewLogrusLogger(),
 	}
 }
 
 func NewUpdateWorkOrderUC() IWorkOrderUC.UpdateWorkOrderUC {
 	return &workorder.UpdateWorkOrderUC{
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
+		Logger:              NewLogrusLogger(),
 	}
 }

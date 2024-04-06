@@ -1,6 +1,7 @@
 package workorder
 
 import (
+	"github.com/sirupsen/logrus"
 	"lucio.com/order-service/src/domain/common/dtos"
 	workOrderDtos "lucio.com/order-service/src/domain/workorder/dtos"
 	"lucio.com/order-service/src/domain/workorder/entities"
@@ -9,13 +10,20 @@ import (
 
 type UpdateWorkOrderUC struct {
 	WorkOrderRepository repositories.WorkOrderRepository
+	Logger              *logrus.Logger
 }
 
 func (u *UpdateWorkOrderUC) Execute(
 	updateWorkOrder entities.WorkOrder,
 ) (*workOrderDtos.UpdatedWorkOrderResponse, *dtos.CustomError) {
+	log := u.Logger.WithFields(logrus.Fields{
+		"file":   "update_work_order_uc",
+		"method": "Execute",
+	})
 	workOrder, err := u.WorkOrderRepository.FindByID(updateWorkOrder.ID)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		return nil, err
 	}
 
@@ -31,7 +39,11 @@ func (u *UpdateWorkOrderUC) Execute(
 		workOrder.PlannedDateEnd = updateWorkOrder.PlannedDateEnd
 	}
 
+	log = log.WithField("workOrder", workOrder)
+
 	if err := u.WorkOrderRepository.Save(workOrder); err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		return nil, err
 	}
 

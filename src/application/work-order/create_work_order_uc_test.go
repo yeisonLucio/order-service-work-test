@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	commonDtos "lucio.com/order-service/src/domain/common/dtos"
 	"lucio.com/order-service/src/domain/customer/entities"
@@ -20,6 +21,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 		WorkOrderRepository *mocks.WorkOrderRepository
 		CustomerRepository  *mocks.CustomerRepository
 		Time                *mocks.Timer
+		Logger              *logrus.Logger
 	}
 	type args struct {
 		createWorkOrderDTO workOrderEntities.WorkOrder
@@ -40,6 +42,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 			name: "should return error when customer does not exist",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -58,6 +61,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 			name: "should return error when begin date is greater than end date",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -77,6 +81,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 			name: "should return error when customer is already inactive",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -100,6 +105,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 				CustomerRepository:  &mocks.CustomerRepository{},
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
 				Time:                &mocks.Timer{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -133,6 +139,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 			fields: fields{
 				CustomerRepository:  &mocks.CustomerRepository{},
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -164,6 +171,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 			fields: fields{
 				CustomerRepository:  &mocks.CustomerRepository{},
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				createWorkOrderDTO: workOrderEntities.WorkOrder{
@@ -210,6 +218,7 @@ func TestCreateWorkOrderUC_Execute(t *testing.T) {
 				WorkOrderRepository: tt.fields.WorkOrderRepository,
 				CustomerRepository:  tt.fields.CustomerRepository,
 				Time:                tt.fields.Time,
+				Logger:              tt.fields.Logger,
 			}
 			got, err := c.Execute(tt.args.createWorkOrderDTO)
 			if (err != nil) != tt.wantErr {

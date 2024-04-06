@@ -9,6 +9,7 @@ func NewCustomerController() *controllers.CustomerController {
 		CustomerRepository:  NewPostgresCustomerRepository(),
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
 		UpdateCustomerUC:    NewUpdateCustomerUC(),
+		Logger:              NewLogrusLogger(),
 	}
 }
 
@@ -17,5 +18,6 @@ func NewWorkOrderController() *controllers.WorkOrderController {
 		FinishWorkOrderUC:   NewFinishWorkOrderUC(),
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
 		UpdateWorkOrderUC:   NewUpdateWorkOrderUC(),
+		Logger:              NewLogrusLogger(),
 	}
 }

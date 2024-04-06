@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	commonDtos "lucio.com/order-service/src/domain/common/dtos"
@@ -23,6 +24,7 @@ import (
 func TestWorkOrderController_GetWorkOrders(t *testing.T) {
 	type dependencies struct {
 		WorkOrderRepository *mocks.WorkOrderRepository
+		Logger              *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -35,6 +37,7 @@ func TestWorkOrderController_GetWorkOrders(t *testing.T) {
 			name: "should return filters work orders",
 			dependencies: dependencies{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			parameters: dtos.WorkOrderFilters{
 				PlannedDateBegin: "2023-01-01T00:00:00Z",
@@ -60,6 +63,7 @@ func TestWorkOrderController_GetWorkOrders(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			w := &WorkOrderController{
 				WorkOrderRepository: tt.dependencies.WorkOrderRepository,
+				Logger:              &logrus.Logger{},
 			}
 
 			router := gin.Default()
@@ -87,6 +91,7 @@ func TestWorkOrderController_GetWorkOrders(t *testing.T) {
 func TestWorkOrderController_FinishWorkOrder(t *testing.T) {
 	type dependencies struct {
 		FinishWorkOrderUC *mocks.FinishWorkOrderUC
+		Logger            *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -99,6 +104,7 @@ func TestWorkOrderController_FinishWorkOrder(t *testing.T) {
 			name: "should finish work order",
 			dependencies: dependencies{
 				FinishWorkOrderUC: &mocks.FinishWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			workOrderId: "uuid",
 			statusCode:  http.StatusNoContent,
@@ -113,6 +119,7 @@ func TestWorkOrderController_FinishWorkOrder(t *testing.T) {
 			name: "should return an error when order cannot be finished",
 			dependencies: dependencies{
 				FinishWorkOrderUC: &mocks.FinishWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			workOrderId: "uuid",
 			statusCode:  http.StatusInternalServerError,
@@ -129,6 +136,7 @@ func TestWorkOrderController_FinishWorkOrder(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			w := &WorkOrderController{
 				FinishWorkOrderUC: tt.dependencies.FinishWorkOrderUC,
+				Logger:            &logrus.Logger{},
 			}
 			router := gin.Default()
 			router.PATCH("/work-orders/:id/finish", w.FinishWorkOrder)
@@ -214,6 +222,7 @@ func TestWorkOrderController_GetWorkOrder(t *testing.T) {
 func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 	type dependencies struct {
 		UpdateWorkOrderUC *mocks.UpdateWorkOrderUC
+		Logger            *logrus.Logger
 	}
 
 	plannedDate, _ := time.Parse(time.DateTime, "2024-03-29 19:14:00")
@@ -230,6 +239,7 @@ func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 			name: "should update work order successfully",
 			dependencies: dependencies{
 				UpdateWorkOrderUC: &mocks.UpdateWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			workOrderId: "uuid",
 			body: []byte(`{
@@ -257,13 +267,17 @@ func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 			name:        "should return an error when data is not valid",
 			workOrderId: "uuid",
 			body:        []byte(`{"title":1}`),
-			statusCode:  http.StatusBadRequest,
-			mocker:      func(d dependencies) {},
+			dependencies: dependencies{
+				Logger: &logrus.Logger{},
+			},
+			statusCode: http.StatusBadRequest,
+			mocker:     func(d dependencies) {},
 		},
 		{
 			name: "should return an error when work order cannot be updated",
 			dependencies: dependencies{
 				UpdateWorkOrderUC: &mocks.UpdateWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			workOrderId: "uuid",
 			body:        []byte(`{}`),
@@ -282,6 +296,7 @@ func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			w := &WorkOrderController{
 				UpdateWorkOrderUC: tt.dependencies.UpdateWorkOrderUC,
+				Logger:            tt.dependencies.Logger,
 			}
 			router := gin.Default()
 			router.PUT("/work-orders/:id", w.UpdateWorkOrder)
@@ -302,6 +317,7 @@ func TestWorkOrderController_UpdateWorkOrder(t *testing.T) {
 func TestWorkOrderController_DeleteWorkOrder(t *testing.T) {
 	type dependencies struct {
 		WorkOrderRepository *mocks.WorkOrderRepository
+		Logger              *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -314,6 +330,7 @@ func TestWorkOrderController_DeleteWorkOrder(t *testing.T) {
 			name: "should return an error when work order does not exist",
 			dependencies: dependencies{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusNotFound,
@@ -328,6 +345,7 @@ func TestWorkOrderController_DeleteWorkOrder(t *testing.T) {
 			name: "should delete the work order successfully",
 			dependencies: dependencies{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusNoContent,
@@ -341,6 +359,7 @@ func TestWorkOrderController_DeleteWorkOrder(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			w := WorkOrderController{
 				WorkOrderRepository: tt.dependencies.WorkOrderRepository,
+				Logger:              tt.dependencies.Logger,
 			}
 			router := gin.Default()
 			router.DELETE("/work-orders/:id", w.DeleteWorkOrder)

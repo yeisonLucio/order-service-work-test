@@ -12,17 +12,20 @@ import (
 func NewPostgresCustomerRepository() ICustomerRepos.CustomerRepository {
 	return &repositories.PostgresCustomerRepository{
 		ClientDB: postgres.DB,
+		Logger:   NewLogrusLogger(),
 	}
 }
 
 func NewPostgresWorkOrderRepository() IWorkOrderRepos.WorkOrderRepository {
 	return &repositories.PostgresWorkOrderRepository{
 		ClientDB: postgres.DB,
+		Logger:   NewLogrusLogger(),
 	}
 }
 
 func NewRedisEventRepository() IWorkOrderRepos.EventRepository {
 	return &repositories.RedisEventRepository{
 		RedisClient: redis.RedisClient,
+		Logger:      NewLogrusLogger(),
 	}
 }

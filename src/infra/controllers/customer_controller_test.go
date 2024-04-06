@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	commonDtos "lucio.com/order-service/src/domain/common/dtos"
 	"lucio.com/order-service/src/domain/customer/entities"
@@ -25,6 +26,7 @@ import (
 func TestCustomerController_CreateCustomer(t *testing.T) {
 	type dependencies struct {
 		CreateCustomerUC *mocks.CreateCustomerUC
+		Logger           *logrus.Logger
 	}
 
 	tests := []struct {
@@ -35,8 +37,11 @@ func TestCustomerController_CreateCustomer(t *testing.T) {
 		mocker       func(d dependencies)
 	}{
 		{
-			name:       "should return an error when data is invalid",
-			request:    []byte(`"first_name":1`),
+			name:    "should return an error when data is invalid",
+			request: []byte(`"first_name":1`),
+			dependencies: dependencies{
+				Logger: &logrus.Logger{},
+			},
 			statusCode: http.StatusBadRequest,
 			mocker:     func(d dependencies) {},
 		},
@@ -44,6 +49,7 @@ func TestCustomerController_CreateCustomer(t *testing.T) {
 			name: "should return an error when use case fail",
 			dependencies: dependencies{
 				CreateCustomerUC: &mocks.CreateCustomerUC{},
+				Logger:           &logrus.Logger{},
 			},
 			request:    []byte(`{}`),
 			statusCode: http.StatusBadRequest,
@@ -57,6 +63,7 @@ func TestCustomerController_CreateCustomer(t *testing.T) {
 			name: "should return success when data is ok",
 			dependencies: dependencies{
 				CreateCustomerUC: &mocks.CreateCustomerUC{},
+				Logger:           &logrus.Logger{},
 			},
 			request:    []byte(`{"first_name":"juan","last_name":"marin","address":"test"}`),
 			statusCode: http.StatusCreated,
@@ -78,6 +85,7 @@ func TestCustomerController_CreateCustomer(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := CustomerController{
 				CreateCustomerUC: tt.dependencies.CreateCustomerUC,
+				Logger:           tt.dependencies.Logger,
 			}
 
 			router := gin.Default()
@@ -95,6 +103,7 @@ func TestCustomerController_CreateCustomer(t *testing.T) {
 func TestCustomerController_CreateWorkOrder(t *testing.T) {
 	type dependencies struct {
 		CreateWorkOrderUC *mocks.CreateWorkOrderUC
+		Logger            *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -108,6 +117,9 @@ func TestCustomerController_CreateWorkOrder(t *testing.T) {
 			name:       "should return an error when data is invalid",
 			customerId: "123",
 			body:       []byte(`"title":1`),
+			dependencies: dependencies{
+				Logger: &logrus.Logger{},
+			},
 			statusCode: http.StatusBadRequest,
 			mocker:     func(d dependencies) {},
 		},
@@ -115,6 +127,7 @@ func TestCustomerController_CreateWorkOrder(t *testing.T) {
 			name: "should return an error when use case fail",
 			dependencies: dependencies{
 				CreateWorkOrderUC: &mocks.CreateWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			customerId: "123",
 			body:       []byte(`{}`),
@@ -129,6 +142,7 @@ func TestCustomerController_CreateWorkOrder(t *testing.T) {
 			name: "should return success when data is ok",
 			dependencies: dependencies{
 				CreateWorkOrderUC: &mocks.CreateWorkOrderUC{},
+				Logger:            &logrus.Logger{},
 			},
 			customerId: "123",
 			body: []byte(`{
@@ -161,6 +175,7 @@ func TestCustomerController_CreateWorkOrder(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := &CustomerController{
 				CreateWorkOrderUC: tt.dependencies.CreateWorkOrderUC,
+				Logger:            tt.dependencies.Logger,
 			}
 
 			router := gin.Default()
@@ -179,6 +194,7 @@ func TestCustomerController_CreateWorkOrder(t *testing.T) {
 func TestCustomerController_GetWorkOrders(t *testing.T) {
 	type dependencies struct {
 		WorkOrderRepository *mocks.WorkOrderRepository
+		Logger              *logrus.Logger
 	}
 
 	tests := []struct {
@@ -192,6 +208,7 @@ func TestCustomerController_GetWorkOrders(t *testing.T) {
 			name: "should return work orders according to customer",
 			dependencies: dependencies{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusOK,
@@ -210,6 +227,7 @@ func TestCustomerController_GetWorkOrders(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := CustomerController{
 				WorkOrderRepository: tt.dependencies.WorkOrderRepository,
+				Logger:              tt.dependencies.Logger,
 			}
 
 			router := gin.Default()
@@ -268,6 +286,7 @@ func TestCustomerController_GetCustomers(t *testing.T) {
 func TestCustomerController_GetCustomer(t *testing.T) {
 	type dependencies struct {
 		CustomerRepository *mocks.CustomerRepository
+		Logger             *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -280,6 +299,7 @@ func TestCustomerController_GetCustomer(t *testing.T) {
 			name: "should return a customer according to id",
 			dependencies: dependencies{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusOK,
@@ -293,6 +313,7 @@ func TestCustomerController_GetCustomer(t *testing.T) {
 			name: "should return an error when customer does not exist",
 			dependencies: dependencies{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusNotFound,
@@ -308,6 +329,7 @@ func TestCustomerController_GetCustomer(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := CustomerController{
 				CustomerRepository: tt.dependencies.CustomerRepository,
+				Logger:             tt.dependencies.Logger,
 			}
 
 			router := gin.Default()
@@ -326,6 +348,7 @@ func TestCustomerController_GetCustomer(t *testing.T) {
 func TestCustomerController_UpdateCustomer(t *testing.T) {
 	type dependencies struct {
 		UpdateCustomerUC *mocks.UpdateCustomerUC
+		Logger           *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -339,6 +362,9 @@ func TestCustomerController_UpdateCustomer(t *testing.T) {
 			name:       "should return an error when data is invalid",
 			customerId: "123",
 			body:       []byte(`"first_name":1`),
+			dependencies: dependencies{
+				Logger: &logrus.Logger{},
+			},
 			statusCode: http.StatusBadRequest,
 			mocker:     func(d dependencies) {},
 		},
@@ -346,6 +372,7 @@ func TestCustomerController_UpdateCustomer(t *testing.T) {
 			name: "should return success when data is valid",
 			dependencies: dependencies{
 				UpdateCustomerUC: &mocks.UpdateCustomerUC{},
+				Logger:           &logrus.Logger{},
 			},
 			customerId: "123",
 			body:       []byte(`{"first_name":"test","last_name":"test","address":"test"}`),
@@ -364,6 +391,7 @@ func TestCustomerController_UpdateCustomer(t *testing.T) {
 			name: "should return an error when the use case fail",
 			dependencies: dependencies{
 				UpdateCustomerUC: &mocks.UpdateCustomerUC{},
+				Logger:           &logrus.Logger{},
 			},
 			customerId: "123",
 			body:       []byte(`{}`),
@@ -387,6 +415,7 @@ func TestCustomerController_UpdateCustomer(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := CustomerController{
 				UpdateCustomerUC: tt.dependencies.UpdateCustomerUC,
+				Logger:           tt.dependencies.Logger,
 			}
 			router := gin.Default()
 			router.PUT("/test/:id", c.UpdateCustomer)
@@ -403,6 +432,7 @@ func TestCustomerController_UpdateCustomer(t *testing.T) {
 func TestCustomerController_DeleteCustomer(t *testing.T) {
 	type dependencies struct {
 		CustomerRepository *mocks.CustomerRepository
+		Logger             *logrus.Logger
 	}
 	tests := []struct {
 		name         string
@@ -415,6 +445,7 @@ func TestCustomerController_DeleteCustomer(t *testing.T) {
 			name: "should return an error when customer does not exist",
 			dependencies: dependencies{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusNotFound,
@@ -428,6 +459,7 @@ func TestCustomerController_DeleteCustomer(t *testing.T) {
 			name: "should delete customer successfully",
 			dependencies: dependencies{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			customerId: "123",
 			statusCode: http.StatusNoContent,
@@ -441,6 +473,7 @@ func TestCustomerController_DeleteCustomer(t *testing.T) {
 			tt.mocker(tt.dependencies)
 			c := CustomerController{
 				CustomerRepository: tt.dependencies.CustomerRepository,
+				Logger:             tt.dependencies.Logger,
 			}
 			router := gin.Default()
 			router.DELETE("/test/:id", c.DeleteCustomer)

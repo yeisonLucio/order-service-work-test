@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	commonDtos "lucio.com/order-service/src/domain/common/dtos"
 	"lucio.com/order-service/src/domain/workorder/dtos"
@@ -17,6 +18,7 @@ import (
 func TestUpdateWorkOrderUC_Execute(t *testing.T) {
 	type fields struct {
 		WorkOrderRepository *mocks.WorkOrderRepository
+		Logger              *logrus.Logger
 	}
 	type args struct {
 		updateWorkOrder entities.WorkOrder
@@ -37,6 +39,7 @@ func TestUpdateWorkOrderUC_Execute(t *testing.T) {
 			name: "should return an error when work order does not exist",
 			fields: fields{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				updateWorkOrder: entities.WorkOrder{},
@@ -56,6 +59,7 @@ func TestUpdateWorkOrderUC_Execute(t *testing.T) {
 			name: "should return an error when work order cannot be saved",
 			fields: fields{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				updateWorkOrder: entities.WorkOrder{
@@ -82,6 +86,7 @@ func TestUpdateWorkOrderUC_Execute(t *testing.T) {
 			name: "should update a work order successfully",
 			fields: fields{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				updateWorkOrder: entities.WorkOrder{
@@ -124,6 +129,7 @@ func TestUpdateWorkOrderUC_Execute(t *testing.T) {
 			tt.mocker(tt.args, tt.fields)
 			u := &UpdateWorkOrderUC{
 				WorkOrderRepository: tt.fields.WorkOrderRepository,
+				Logger:              tt.fields.Logger,
 			}
 			got, err := u.Execute(tt.args.updateWorkOrder)
 			if (err != nil) != tt.wantErr {

@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"lucio.com/order-service/src/domain/common/dtos"
 	customerEntities "lucio.com/order-service/src/domain/customer/entities"
@@ -19,6 +20,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 		CustomerRepository  *mocks.CustomerRepository
 		EventRepository     *mocks.EventRepository
 		Time                *mocks.Timer
+		Logger              *logrus.Logger
 	}
 	type args struct {
 		ID string
@@ -35,6 +37,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 			name: "should return an error when work order id does not exist",
 			fields: fields{
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				ID: "uuid",
@@ -52,6 +55,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
 				CustomerRepository:  &mocks.CustomerRepository{},
 				Time:                &mocks.Timer{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				ID: "uuid",
@@ -87,6 +91,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 				WorkOrderRepository: &mocks.WorkOrderRepository{},
 				CustomerRepository:  &mocks.CustomerRepository{},
 				Time:                &mocks.Timer{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				ID: "uuid",
@@ -122,6 +127,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 				CustomerRepository:  &mocks.CustomerRepository{},
 				Time:                &mocks.Timer{},
 				EventRepository:     &mocks.EventRepository{},
+				Logger:              &logrus.Logger{},
 			},
 			args: args{
 				ID: "uuid",
@@ -161,6 +167,7 @@ func TestFinishWorkOrderUC_Execute(t *testing.T) {
 				CustomerRepository:  tt.fields.CustomerRepository,
 				EventRepository:     tt.fields.EventRepository,
 				Time:                tt.fields.Time,
+				Logger:              tt.fields.Logger,
 			}
 			if err := f.Execute(tt.args.ID); (err != nil) != tt.wantErr {
 				t.Errorf("FinishWorkOrderUC.Execute() error = %v, wantErr %v", err, tt.wantErr)

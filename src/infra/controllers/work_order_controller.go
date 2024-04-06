@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"lucio.com/order-service/src/domain/workorder/dtos"
 	"lucio.com/order-service/src/domain/workorder/repositories"
 	usecases "lucio.com/order-service/src/domain/workorder/usecases"
@@ -14,6 +15,7 @@ type WorkOrderController struct {
 	FinishWorkOrderUC   usecases.FinishWorkOrderUC
 	WorkOrderRepository repositories.WorkOrderRepository
 	UpdateWorkOrderUC   usecases.UpdateWorkOrderUC
+	Logger              *logrus.Logger
 }
 
 // @Summary Servicio para obtener las ordenes de servicio tendiendo en cuenta los filtros
@@ -46,7 +48,14 @@ func (w *WorkOrderController) GetWorkOrders(ctx *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /work-orders/{id}/finish [patch]
 func (w *WorkOrderController) FinishWorkOrder(ctx *gin.Context) {
+	log := w.Logger.WithFields(logrus.Fields{
+		"file":    "work_order_controller",
+		"method":  "FinishWorkOrder",
+		"request": ctx.Request,
+	})
 	if err := w.FinishWorkOrderUC.Execute(ctx.Param("id")); err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -66,7 +75,6 @@ func (w *WorkOrderController) FinishWorkOrder(ctx *gin.Context) {
 // @Failure 404 {object} dto.ErrorResponse
 // @Router /work-orders/{id} [get]
 func (w *WorkOrderController) GetWorkOrder(ctx *gin.Context) {
-
 	filters := dtos.WorkOrderFilters{
 		ID: ctx.Param("id"),
 	}
@@ -95,18 +103,30 @@ func (w *WorkOrderController) GetWorkOrder(ctx *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /work-orders/{id} [put]
 func (w *WorkOrderController) UpdateWorkOrder(ctx *gin.Context) {
+	log := w.Logger.WithFields(logrus.Fields{
+		"file":    "work_order_controller",
+		"method":  "UpdateWorkOrder",
+		"request": ctx.Request,
+	})
+
 	var updateWorkOrder workorder.UpdateWorkOrder
 
 	workOrderEntity, err := updateWorkOrder.ValidateAndGetEntity(ctx)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error.Error(),
 		})
 		return
 	}
 
+	log = log.WithField("workOrder", workOrderEntity)
+
 	updatedCustomer, err := w.UpdateWorkOrderUC.Execute(*workOrderEntity)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})
@@ -126,8 +146,15 @@ func (w *WorkOrderController) UpdateWorkOrder(ctx *gin.Context) {
 // @Failure 404 {object} dto.ErrorResponse
 // @Router /work-orders/{id} [delete]
 func (w *WorkOrderController) DeleteWorkOrder(ctx *gin.Context) {
+	log := w.Logger.WithFields(logrus.Fields{
+		"file":    "customer_controller",
+		"method":  "DeleteWorkOrder",
+		"request": ctx.Request,
+	})
 	err := w.WorkOrderRepository.DeleteByID(ctx.Param("id"))
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		ctx.JSON(err.Code, gin.H{
 			"error": err.Error.Error(),
 		})

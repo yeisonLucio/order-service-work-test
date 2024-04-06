@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"lucio.com/order-service/src/domain/common/dtos"
 	customerDtos "lucio.com/order-service/src/domain/customer/dtos"
@@ -15,6 +16,7 @@ import (
 func TestUpdateCustomerUC_Execute(t *testing.T) {
 	type fields struct {
 		CustomerRepository *mocks.CustomerRepository
+		Logger             *logrus.Logger
 	}
 	type args struct {
 		updateCustomer entities.Customer
@@ -31,6 +33,7 @@ func TestUpdateCustomerUC_Execute(t *testing.T) {
 			name: "should return an error when customer does not exist",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				updateCustomer: entities.Customer{},
@@ -50,6 +53,7 @@ func TestUpdateCustomerUC_Execute(t *testing.T) {
 			name: "should return an error when customer cannot be saved",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				updateCustomer: entities.Customer{
@@ -78,6 +82,7 @@ func TestUpdateCustomerUC_Execute(t *testing.T) {
 			name: "should update customer successfully",
 			fields: fields{
 				CustomerRepository: &mocks.CustomerRepository{},
+				Logger:             &logrus.Logger{},
 			},
 			args: args{
 				updateCustomer: entities.Customer{
@@ -118,6 +123,7 @@ func TestUpdateCustomerUC_Execute(t *testing.T) {
 			tt.mocker(tt.args, tt.fields)
 			u := &UpdateCustomerUC{
 				CustomerRepository: tt.fields.CustomerRepository,
+				Logger:             tt.fields.Logger,
 			}
 			got, err := u.Execute(tt.args.updateCustomer)
 			if (err != nil) != tt.wantErr {

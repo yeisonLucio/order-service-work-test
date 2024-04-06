@@ -3,6 +3,7 @@ package workorder
 import (
 	"errors"
 
+	"github.com/sirupsen/logrus"
 	"lucio.com/order-service/src/domain/common/dtos"
 	"lucio.com/order-service/src/domain/common/helpers"
 	consumerRepos "lucio.com/order-service/src/domain/customer/repositories"
@@ -16,17 +17,25 @@ type CreateWorkOrderUC struct {
 	WorkOrderRepository repositories.WorkOrderRepository
 	CustomerRepository  consumerRepos.CustomerRepository
 	Time                helpers.Timer
+	Logger              *logrus.Logger
 }
 
 func (c *CreateWorkOrderUC) Execute(
 	createWorkOrder entities.WorkOrder,
 ) (*workOrderDtos.CreatedWorkOrderResponse, *dtos.CustomError) {
+	log := c.Logger.WithFields(logrus.Fields{
+		"file":   "create_work_order_uc",
+		"method": "Execute",
+	})
 	customer, err := c.CustomerRepository.FindByID(createWorkOrder.CustomerID)
 	if err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		return nil, err
 	}
 
 	if createWorkOrder.PlannedDateBegin.After(*createWorkOrder.PlannedDateEnd) {
+		log.Warning("la fecha de inicio no puede ser mayor que la fecha de fin")
 		return nil, &dtos.CustomError{
 			Code:  400,
 			Error: errors.New("la fecha de inicio no puede ser mayor que la fecha de fin"),
@@ -34,6 +43,7 @@ func (c *CreateWorkOrderUC) Execute(
 	}
 
 	if createWorkOrder.Type == enums.InactiveCustomer {
+		log.Warning("el cliente ya se encuentra inactivo")
 		if !customer.IsActive {
 			return nil, &dtos.CustomError{
 				Code:  400,
@@ -44,14 +54,22 @@ func (c *CreateWorkOrderUC) Execute(
 		customer.IsActive = false
 		customer.EndDate = c.Time.Now()
 
+		log = log.WithField("customer", customer)
+
 		if err := c.CustomerRepository.Save(customer); err != nil {
+			log = log.WithField("error", err)
+			log.Error()
 			return nil, err
 		}
 	}
 
 	createWorkOrder.Status = enums.StatusNew
 
+	log = log.WithField("workOrder", createWorkOrder)
+
 	if err := c.WorkOrderRepository.Create(&createWorkOrder); err != nil {
+		log = log.WithField("error", err)
+		log.Error()
 		return nil, err
 	}
 
