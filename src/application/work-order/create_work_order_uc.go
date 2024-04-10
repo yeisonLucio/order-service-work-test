@@ -13,6 +13,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/repositories"
 )
 
+// CreateWorkOrderUC define las dependencias externas a utilizar  en este caso de uso
 type CreateWorkOrderUC struct {
 	WorkOrderRepository repositories.WorkOrderRepository
 	CustomerRepository  consumerRepos.CustomerRepository
@@ -20,6 +21,7 @@ type CreateWorkOrderUC struct {
 	Logger              *logrus.Logger
 }
 
+// Execute crea un nueva orden de servicio
 func (c *CreateWorkOrderUC) Execute(
 	createWorkOrder entities.WorkOrder,
 ) (*workOrderDtos.CreatedWorkOrderResponse, *dtos.CustomError) {

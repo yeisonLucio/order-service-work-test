@@ -12,6 +12,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/enums"
 )
 
+// UpdateWorkOrder define un request para actualizar una orden de servicio
 type UpdateWorkOrder struct {
 	ID               string `json:"id"`
 	Title            string `json:"title"`
@@ -20,6 +21,7 @@ type UpdateWorkOrder struct {
 	Type             string `json:"type"`
 }
 
+// ValidateAndGetEntity permite validar el request para actualizar una orden de servicio
 func (c *UpdateWorkOrder) ValidateAndGetEntity(ctx *gin.Context) (*entities.WorkOrder, *dtos.CustomError) {
 	incorrectFormatError := &dtos.CustomError{
 		Code:  400,

@@ -14,6 +14,7 @@ import (
 	"lucio.com/order-service/src/infra/requests/workorder"
 )
 
+// CustomerController estructura que permite gestionar los clientes
 type CustomerController struct {
 	CreateCustomerUC    ucConsumer.CreateCustomerUC
 	CreateWorkOrderUC   ucCreateWork.CreateWorkOrderUC

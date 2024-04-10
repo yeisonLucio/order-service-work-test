@@ -11,6 +11,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/enums"
 )
 
+// WorkOrder define el modelo de datos de una orden de servicio
 type WorkOrder struct {
 	ID               uuid.UUID  `gorm:"type:uuid;primaryKey" json:"id"`
 	CustomerID       uuid.UUID  `gorm:"type:uuid;not null" json:"customer_id"`
@@ -24,6 +25,7 @@ type WorkOrder struct {
 	Customer         Customer
 }
 
+// NewFromEntity permite crear un objeto del modelo a partir de la entidad
 func (w *WorkOrder) NewFromEntity(entity *entities.WorkOrder) {
 	w.ID = uuid.New()
 	w.CustomerID = uuid.MustParse(entity.CustomerID)
@@ -34,6 +36,7 @@ func (w *WorkOrder) NewFromEntity(entity *entities.WorkOrder) {
 	w.Type = string(entity.Type)
 }
 
+// ToEntity permite crear un objeto de la entidad desde el modelo de datos
 func (w *WorkOrder) ToEntity() *entities.WorkOrder {
 	return &entities.WorkOrder{
 		ID:               w.ID.String(),
@@ -46,6 +49,7 @@ func (w *WorkOrder) ToEntity() *entities.WorkOrder {
 	}
 }
 
+// FromEntity permite setear la información de la entidad en el modelo de datos
 func (w *WorkOrder) FromEntity(entity *entities.WorkOrder) {
 	w.ID = uuid.MustParse(entity.ID)
 	w.CustomerID = uuid.MustParse(entity.CustomerID)
@@ -56,6 +60,7 @@ func (w *WorkOrder) FromEntity(entity *entities.WorkOrder) {
 	w.Type = string(entity.Type)
 }
 
+// ToWorkOrderDto permite mapear el modelo en el dto WorkOrder
 func (w *WorkOrder) ToWorkOrderDto() *workOrderDtos.WorkOrder {
 	return &workOrderDtos.WorkOrder{
 		ID:               w.ID.String(),

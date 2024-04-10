@@ -1,5 +1,6 @@
 package dtos
 
+// CreatedWorkOrderResponse define el modelo de respuesta de cuando se crea una orden de servicio
 type CreatedWorkOrderResponse struct {
 	ID               string `json:"id"`
 	Status           string `json:"status"`

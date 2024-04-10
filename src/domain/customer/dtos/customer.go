@@ -1,5 +1,6 @@
 package dtos
 
+// Customer define modelo de objeto de transferencia de customer
 type Customer struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name"`

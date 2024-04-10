@@ -6,6 +6,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/enums"
 )
 
+// WorkOrder define la entidad de una orden de servicio
 type WorkOrder struct {
 	ID               string
 	CustomerID       string

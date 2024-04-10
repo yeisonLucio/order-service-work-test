@@ -11,6 +11,7 @@ import (
 	"lucio.com/order-service/src/infra/requests/workorder"
 )
 
+// WorkOrderController estructura que permite gestionar ordenes de trabajo
 type WorkOrderController struct {
 	FinishWorkOrderUC   usecases.FinishWorkOrderUC
 	WorkOrderRepository repositories.WorkOrderRepository

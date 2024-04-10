@@ -8,11 +8,13 @@ import (
 	"lucio.com/order-service/src/domain/customer/repositories"
 )
 
+// UpdateCustomerUC define las dependencias externas a utilizar en este caso de uso
 type UpdateCustomerUC struct {
 	CustomerRepository repositories.CustomerRepository
 	Logger             *logrus.Logger
 }
 
+// Execute permite actualizar un customer
 func (u *UpdateCustomerUC) Execute(
 	updateCustomer entities.Customer,
 ) (*customerDtos.UpdatedCustomerResponse, *dtos.CustomError) {

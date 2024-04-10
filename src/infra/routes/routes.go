@@ -11,6 +11,7 @@ import (
 	"lucio.com/order-service/src/infra/factories"
 )
 
+// GetRoutes define las rutas de la api
 func GetRoutes(app *gin.Engine) *gin.Engine {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Host = fmt.Sprintf("localhost:%s", os.Getenv("APP_PORT"))

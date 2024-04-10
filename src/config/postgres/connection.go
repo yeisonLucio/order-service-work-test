@@ -8,8 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
+// DB contiene la conexión a la base de datos
 var DB *gorm.DB
 
+// Connect permite realizar conexión a la base de datos de postgres
 func Connect() {
 	url := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",

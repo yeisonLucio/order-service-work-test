@@ -10,12 +10,14 @@ import (
 	"lucio.com/order-service/src/domain/customer/entities"
 )
 
+// CreateCustomer define el request para crear un customer
 type CreateCustomer struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Address   string `json:"address"`
 }
 
+// ValidateAndGetEntity permite validar el request para crear un customer
 func (c *CreateCustomer) ValidateAndGetEntity(ctx *gin.Context) (*entities.Customer, *dtos.CustomError) {
 	incorrectFormatError := &dtos.CustomError{
 		Code:  400,

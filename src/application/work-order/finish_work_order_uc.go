@@ -10,6 +10,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/repositories"
 )
 
+// FinishWorkOrderUC define las dependencias externas a utilizar para este caso de uso
 type FinishWorkOrderUC struct {
 	WorkOrderRepository repositories.WorkOrderRepository
 	CustomerRepository  customerRepos.CustomerRepository
@@ -18,6 +19,7 @@ type FinishWorkOrderUC struct {
 	Logger              *logrus.Logger
 }
 
+// Execute permite finalizar una orden de servicio por id
 func (f *FinishWorkOrderUC) Execute(ID string) *dtos.CustomError {
 	log := f.Logger.WithFields(logrus.Fields{
 		"file":   "finish_work_order_uc",

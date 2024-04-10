@@ -8,11 +8,13 @@ import (
 	"lucio.com/order-service/src/domain/workorder/repositories"
 )
 
+// UpdateWorkOrderUC define las dependencias externas a utilizar
 type UpdateWorkOrderUC struct {
 	WorkOrderRepository repositories.WorkOrderRepository
 	Logger              *logrus.Logger
 }
 
+// Execute permite actualizar una orden de servicio
 func (u *UpdateWorkOrderUC) Execute(
 	updateWorkOrder entities.WorkOrder,
 ) (*workOrderDtos.UpdatedWorkOrderResponse, *dtos.CustomError) {

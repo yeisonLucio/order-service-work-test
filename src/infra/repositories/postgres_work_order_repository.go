@@ -11,11 +11,13 @@ import (
 	"lucio.com/order-service/src/infra/models"
 )
 
+// PostgresWorkOrderRepository permite acceder a métodos para realizar consultas a base de datos
 type PostgresWorkOrderRepository struct {
 	ClientDB *gorm.DB
 	Logger   *logrus.Logger
 }
 
+// Create permite crear una orden de servicio
 func (p *PostgresWorkOrderRepository) Create(workOrder *entities.WorkOrder) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -41,6 +43,7 @@ func (p *PostgresWorkOrderRepository) Create(workOrder *entities.WorkOrder) *dto
 	return nil
 }
 
+// IsTheFirstOrder permite validar si es la primera orden de servicio de un cliente
 func (p *PostgresWorkOrderRepository) IsTheFirstOrder(customerID string) bool {
 	var totalOrders int64
 	p.ClientDB.Model(models.WorkOrder{}).
@@ -50,6 +53,7 @@ func (p *PostgresWorkOrderRepository) IsTheFirstOrder(customerID string) bool {
 	return totalOrders == 1
 }
 
+// FindByID permite obtener una orden de servicio por id
 func (p *PostgresWorkOrderRepository) FindByID(ID string) (*entities.WorkOrder, *dtos.CustomError) {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -70,6 +74,7 @@ func (p *PostgresWorkOrderRepository) FindByID(ID string) (*entities.WorkOrder, 
 	return workOrder.ToEntity(), nil
 }
 
+// Save permite guardar una orden de servicio
 func (p *PostgresWorkOrderRepository) Save(workOrder *entities.WorkOrder) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -102,6 +107,7 @@ func (p *PostgresWorkOrderRepository) Save(workOrder *entities.WorkOrder) *dtos.
 	return nil
 }
 
+// GetFiltered permite obtener ordenes de servicio de acuerdo con los filtros pasados
 func (p *PostgresWorkOrderRepository) GetFiltered(filters workOrderDtos.WorkOrderFilters) []*workOrderDtos.WorkOrder {
 	var workOrders []models.WorkOrder
 	query := p.ClientDB.Table("work_orders wo").
@@ -149,6 +155,7 @@ func (p *PostgresWorkOrderRepository) GetFiltered(filters workOrderDtos.WorkOrde
 	return workOrderDto
 }
 
+// DeleteByID permite eliminar una orden de servicio por su id
 func (p *PostgresWorkOrderRepository) DeleteByID(ID string) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",

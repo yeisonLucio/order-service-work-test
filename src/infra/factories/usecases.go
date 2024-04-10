@@ -7,6 +7,7 @@ import (
 	IWorkOrderUC "lucio.com/order-service/src/domain/workorder/usecases"
 )
 
+// NewCreateCustomerUC función para inicializar el caso de uso de crear nuevo cliente
 func NewCreateCustomerUC() ICustomerUC.CreateCustomerUC {
 	return &customer.CreateCustomerUC{
 		CustomerRepository: NewPostgresCustomerRepository(),
@@ -14,6 +15,7 @@ func NewCreateCustomerUC() ICustomerUC.CreateCustomerUC {
 	}
 }
 
+// NewCreateWorkOrderUC función para inicializar el caso de uso de crear nueva orden de servicio
 func NewCreateWorkOrderUC() IWorkOrderUC.CreateWorkOrderUC {
 	return &workorder.CreateWorkOrderUC{
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
@@ -23,6 +25,7 @@ func NewCreateWorkOrderUC() IWorkOrderUC.CreateWorkOrderUC {
 	}
 }
 
+// NewFinishWorkOrderUC función para inicializar el caso de uso de finalizar una orden de servicio
 func NewFinishWorkOrderUC() IWorkOrderUC.FinishWorkOrderUC {
 	return &workorder.FinishWorkOrderUC{
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),
@@ -33,6 +36,7 @@ func NewFinishWorkOrderUC() IWorkOrderUC.FinishWorkOrderUC {
 	}
 }
 
+// NewUpdateCustomerUC función para inicializar el caso de uso de actualizar cliente
 func NewUpdateCustomerUC() ICustomerUC.UpdateCustomerUC {
 	return &customer.UpdateCustomerUC{
 		CustomerRepository: NewPostgresCustomerRepository(),
@@ -40,6 +44,7 @@ func NewUpdateCustomerUC() ICustomerUC.UpdateCustomerUC {
 	}
 }
 
+// NewUpdateWorkOrderUC función para inicializar el caso de uso de actualizar orden de servicio
 func NewUpdateWorkOrderUC() IWorkOrderUC.UpdateWorkOrderUC {
 	return &workorder.UpdateWorkOrderUC{
 		WorkOrderRepository: NewPostgresWorkOrderRepository(),

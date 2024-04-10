@@ -2,6 +2,7 @@ package entities
 
 import "time"
 
+// Customer define la entidad de un customer
 type Customer struct {
 	ID        string
 	FirstName string

@@ -9,8 +9,10 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// RedisClient contiene la conexión con redis
 var RedisClient *redis.Client
 
+// Connect permite realizar conexión con redis
 func Connect() {
 	redisDB := os.Getenv("REDIS_DB")
 	db, err := strconv.Atoi(redisDB)

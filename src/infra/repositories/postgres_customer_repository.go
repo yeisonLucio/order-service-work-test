@@ -10,11 +10,13 @@ import (
 	"lucio.com/order-service/src/infra/models"
 )
 
+// PostgresCustomerRepository permite acceder a métodos para realizar consultas a base de datos
 type PostgresCustomerRepository struct {
 	ClientDB *gorm.DB
 	Logger   *logrus.Logger
 }
 
+// Create método para crear un customer
 func (p *PostgresCustomerRepository) Create(customer *entities.Customer) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -38,6 +40,7 @@ func (p *PostgresCustomerRepository) Create(customer *entities.Customer) *dtos.C
 	return nil
 }
 
+// FindByID método para buscar un customer por su id
 func (p *PostgresCustomerRepository) FindByID(ID string) (*entities.Customer, *dtos.CustomError) {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -59,6 +62,7 @@ func (p *PostgresCustomerRepository) FindByID(ID string) (*entities.Customer, *d
 	return customer.ToEntity(), nil
 }
 
+// Save método para guardar un customer
 func (p *PostgresCustomerRepository) Save(customer *entities.Customer) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",
@@ -82,6 +86,7 @@ func (p *PostgresCustomerRepository) Save(customer *entities.Customer) *dtos.Cus
 	return nil
 }
 
+// GetActives permite obtener los clientes en estado activo
 func (p *PostgresCustomerRepository) GetActives() []entities.Customer {
 	var customersDB []models.Customer
 
@@ -98,6 +103,7 @@ func (p *PostgresCustomerRepository) GetActives() []entities.Customer {
 	return customers
 }
 
+// DeleteByID permite eliminar un cliente por su id
 func (p *PostgresCustomerRepository) DeleteByID(ID string) *dtos.CustomError {
 	log := p.Logger.WithFields(logrus.Fields{
 		"file":   "postgres_customer_repository",

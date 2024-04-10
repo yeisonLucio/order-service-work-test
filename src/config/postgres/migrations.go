@@ -6,6 +6,7 @@ import (
 	"lucio.com/order-service/src/infra/models"
 )
 
+// RunMigrations migra los modelos de base de datos
 func RunMigrations() {
 	err := DB.AutoMigrate(
 		&models.Customer{},

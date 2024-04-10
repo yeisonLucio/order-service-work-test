@@ -6,6 +6,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/entities"
 )
 
+// WorkOrderRepository define los métodos a utilizar por el repositorio de work order
 type WorkOrderRepository interface {
 	Create(workOrder *entities.WorkOrder) *dtos.CustomError
 	IsTheFirstOrder(customerID string) bool

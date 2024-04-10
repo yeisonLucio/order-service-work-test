@@ -8,11 +8,13 @@ import (
 	"lucio.com/order-service/src/domain/customer/repositories"
 )
 
+// CreateCustomerUC define las dependencias a utilizar en este caso de uso
 type CreateCustomerUC struct {
 	CustomerRepository repositories.CustomerRepository
 	Logger             *logrus.Logger
 }
 
+// Execute permite crear un customer
 func (c *CreateCustomerUC) Execute(
 	createCustomer entities.Customer,
 ) (*customerDtos.CreatedCustomerResponse, *dtos.CustomError) {

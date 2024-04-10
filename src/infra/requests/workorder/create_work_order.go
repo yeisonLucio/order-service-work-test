@@ -12,6 +12,7 @@ import (
 	"lucio.com/order-service/src/domain/workorder/enums"
 )
 
+// CreateWorkOrder define el request para crear una orden de servicio
 type CreateWorkOrder struct {
 	CustomerID       string `json:"customer_id"`
 	Title            string `json:"title"`
@@ -20,6 +21,7 @@ type CreateWorkOrder struct {
 	Type             string `json:"type" enum:"service_order,inactive_customer"`
 }
 
+// ValidateAndGetEntity permite validar el request para crear una orden de servicio
 func (c *CreateWorkOrder) ValidateAndGetEntity(ctx *gin.Context) (*entities.WorkOrder, *dtos.CustomError) {
 	incorrectFormatError := &dtos.CustomError{
 		Code:  400,

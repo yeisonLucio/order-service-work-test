@@ -10,6 +10,7 @@ import (
 	"lucio.com/order-service/src/domain/customer/entities"
 )
 
+// UpdateCustomer define el request para actualizar un customer
 type UpdateCustomer struct {
 	ID        string `json:"id"`
 	FirstName string `json:"first_name"`
@@ -17,6 +18,7 @@ type UpdateCustomer struct {
 	Address   string `json:"address"`
 }
 
+// ValidateAndGetEntity permite validar el request de actualizar un customer
 func (c *UpdateCustomer) ValidateAndGetEntity(ctx *gin.Context) (*entities.Customer, *dtos.CustomError) {
 	incorrectFormatError := &dtos.CustomError{
 		Code:  400,

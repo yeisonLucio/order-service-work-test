@@ -11,11 +11,13 @@ import (
 
 const workOrderUpdatedStream string = "work-order-updated"
 
+// RedisEventRepository estructura para enviar que permite acceder a métodos para enviar eventos
 type RedisEventRepository struct {
 	RedisClient *redis.Client
 	Logger      *logrus.Logger
 }
 
+// NotifyWorkOrderFinished permite enviar mensaje por el stream work-order-updated
 func (r *RedisEventRepository) NotifyWorkOrderFinished(payload *entities.WorkOrder) *dtos.CustomError {
 	log := r.Logger.WithFields(logrus.Fields{
 		"file":    "postgres_customer_repository",
